@@ -22,6 +22,35 @@ Multi-provider HUD assistant: Anthropic, OpenAI, or Groq. Wake word, global
 hotkey, computer control, file attachments, custom connectors, and
 persistent chat history.
 
+## The interface (rebuilt on the web AURA layout)
+
+The old floating-HUD layout is gone — no more absolutely-positioned orb drifting
+to a corner over a full-bleed background. The desktop app now uses the same
+structure as the AURA web interface:
+
+- **Top bar** — brand mark, wordmark with its expansion, a live state pill
+  (Standby / Listening / Processing / Responding), clock, PC-control indicator,
+  Settings.
+- **Left rail** — three bordered panels with corner brackets. *Core* reports
+  link state, active provider, session ID, exchange count and measured response
+  latency. *Directives* holds four one-click prompts. *Protocol* shows persona,
+  wake word and storage scope. A New session button sits at the foot.
+- **Main panel** — a rounded, translucent panel holding the reactor stage, the
+  transcript, and the composer. The reactor sits centred and large until your
+  first message, then the whole stage collapses sideways into a compact header
+  row with the session ID beside it.
+
+**The rail readouts are real.** Link state and provider come from the actual
+saved settings; exchanges are counted by observing the transcript; latency is
+timed off the reactor's own thinking state. Nothing is a decorative fake
+number, and none of it hooks into the chat logic — the rail *observes* the app
+via MutationObserver, so the provider calls, tool execution, history and voice
+code are untouched by the redesign.
+
+The aurora field is now a fixed full-window layer behind everything, with the
+panels translucent over it. Settings and the conversation sidebar moved to
+window level so they overlay the whole app rather than one pane.
+
 ## AURA's own identity (not a repainted Kairos)
 
 **Palette.** The cyan/navy HUD is gone. Surfaces are deep indigo-blue

@@ -13,6 +13,11 @@
     --blue-glow: rgba(95, 131, 255, 0.45);
     --text-dim: #8d90c4;
     --danger: #ff6f91;
+    --line: rgba(130, 104, 255, 0.17);
+    --line-strong: rgba(130, 104, 255, 0.34);
+    --panel: rgba(18, 18, 48, 0.5);
+    --faint: #585d8f;
+    --mono: 'Consolas', 'SF Mono', ui-monospace, monospace;
   }
   * { box-sizing: border-box; }
   html, body {
@@ -21,7 +26,7 @@
     font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     overflow: hidden;
   }
-  .screen { width: 100%; height: 100vh; display: flex; flex-direction: column; }
+
 
 
   /* ---------- BOOT SEQUENCE ---------- */
@@ -56,74 +61,153 @@
   }
   @keyframes bootFill { to { width: 100%; } }
 
+  /* ---------- SHELL ---------- */
+  #bgCanvas { position: fixed; inset: 0; z-index: 0; }
+  .vignette {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 40%, transparent 42%, rgba(3,3,12,0.72) 100%);
+  }
+  .screen {
+    position: relative; z-index: 2; width: 100%; height: 100vh;
+    display: grid; grid-template-columns: 266px 1fr; grid-template-rows: 62px 1fr;
+    gap: 14px; padding: 14px;
+  }
+
   /* ---------- TOP BAR ---------- */
   .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 28px;
-    border-bottom: 1px solid rgba(154, 124, 255, 0.18);
-    background: linear-gradient(180deg, rgba(10,20,30,0.6), rgba(10,20,30,0));
-    flex-shrink: 0;
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 16px; padding: 0 16px;
+    background: linear-gradient(90deg, rgba(20,26,68,0.52), rgba(43,20,88,0.34));
+    border: 1px solid var(--line); border-radius: 14px;
+    backdrop-filter: blur(10px);
   }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-mark {
-    width: 30px; height: 30px; flex-shrink: 0;
-    filter: drop-shadow(0 0 7px var(--accent-glow));
-  }
+  .brand { display: flex; align-items: center; gap: 11px; }
+  .brand-mark { width: 30px; height: 30px; flex-shrink: 0; filter: drop-shadow(0 0 7px var(--accent-glow)); }
   .brand-text { display: flex; flex-direction: column; justify-content: center; gap: 1px; }
   .brand-name {
     font-size: 19px; letter-spacing: 5px; font-weight: 500; line-height: 1;
     background: linear-gradient(95deg, #cfd4ff, #a98bff 62%, #d9caff);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .brand-sub {
-    font-size: 7.5px; letter-spacing: 2.4px; color: #5a5f96;
-    font-family: 'Consolas', 'SF Mono', monospace; white-space: nowrap;
+  .brand-sub { font-size: 7.5px; letter-spacing: 2.4px; color: var(--faint); font-family: var(--mono); white-space: nowrap; }
+  .topbar .spacer { flex: 1; }
+
+  .state-pill {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase;
+    padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--line-strong); background: rgba(154,124,255,0.09); color: #a98bff;
   }
-  .clock-block { display: flex; align-items: baseline; gap: 12px; }
-  .clock-time { font-size: 22px; font-weight: 600; color: var(--accent); letter-spacing: 1px; }
-  .clock-time small{ font-size: 12px; font-weight: 500; margin-left: 4px; color: var(--text-dim); }
-  .clock-date { font-size: 12px; color: var(--text-dim); }
-  .status-icons { display: flex; align-items: center; gap: 22px; }
-  .status-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; color: var(--text-dim); }
-  .status-item svg { width: 18px; height: 18px; stroke: var(--accent); fill: none; }
+  .state-pill .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #a98bff;
+    animation: beat 2.6s ease-out infinite;
+  }
+  @keyframes beat {
+    0%   { box-shadow: 0 0 0 0 var(--accent-glow); }
+    70%  { box-shadow: 0 0 0 7px rgba(154,124,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(154,124,255,0); }
+  }
+  .orb-wrap.listening ~ * .state-pill { color: var(--accent); }
+
+  .clock-block { display: flex; align-items: baseline; gap: 10px; }
+  .clock-time { font-size: 19px; font-weight: 600; color: var(--accent); letter-spacing: 1px; font-family: var(--mono); }
+  .clock-time small { font-size: 11px; font-weight: 500; margin-left: 4px; color: var(--text-dim); }
+  .clock-date { font-size: 11px; color: var(--text-dim); }
+  .status-icons { display: flex; align-items: center; gap: 18px; }
+  .status-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--text-dim); }
+  .status-item svg { width: 17px; height: 17px; stroke: var(--accent); fill: none; }
   .status-item.clickable { cursor: pointer; }
   .status-item.clickable:hover { color: var(--accent); }
 
-  /* ---------- STAGE ---------- */
-  .stage { flex: 1; position: relative; overflow: hidden; }
-  #bgCanvas { position: absolute; inset: 0; z-index: 0; opacity: 0.8; }
+  /* ---------- SIDE RAIL ---------- */
+  .rail { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow-y: auto; padding-right: 2px; }
+  .panel {
+    position: relative; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 14px 15px; backdrop-filter: blur(10px);
+  }
+  .panel::before, .panel::after {
+    content: ''; position: absolute; width: 9px; height: 9px; pointer-events: none;
+    border-color: var(--line-strong); border-style: solid;
+  }
+  .panel::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; border-radius: 14px 0 0 0; }
+  .panel::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; border-radius: 0 0 14px 0; }
+  .panel h2 {
+    font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: 2.4px;
+    text-transform: uppercase; color: var(--faint); margin: 0 0 11px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel h2::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line-strong), transparent); }
 
-  /* ---------- ARC REACTOR (hero position by default) ---------- */
+  .readout { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 12px; }
+  .readout + .readout { border-top: 1px solid rgba(130,104,255,0.08); }
+  .readout .k { color: var(--text-dim); }
+  .readout .v { font-family: var(--mono); font-size: 11px; color: #a98bff; letter-spacing: 0.4px; }
+  .readout .v.blue { color: var(--accent-2); }
+  .meter { height: 3px; border-radius: 2px; background: rgba(130,104,255,0.13); overflow: hidden; margin-top: 9px; }
+  .meter i { display: block; height: 100%; width: 8%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent)); transition: width 0.6s ease; }
+
+  .chips { display: flex; flex-direction: column; gap: 7px; }
+  .chip {
+    text-align: left; cursor: pointer; font-family: inherit; font-size: 12.5px; color: #e2e0fa;
+    padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line);
+    background: linear-gradient(120deg, rgba(95,131,255,0.07), rgba(154,124,255,0.07));
+    transition: border-color 0.18s, transform 0.18s, background 0.18s;
+  }
+  .chip:hover { border-color: var(--line-strong); transform: translateX(3px);
+    background: linear-gradient(120deg, rgba(95,131,255,0.16), rgba(154,124,255,0.16)); }
+  .chip span { display: block; font-family: var(--mono); font-size: 8.5px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--faint); margin-bottom: 2px; }
+
+  .rail-foot { margin-top: auto; padding-top: 4px; display: flex; flex-direction: column; gap: 8px; }
+  .ghost-btn {
+    width: 100%; cursor: pointer; font-family: var(--mono); font-size: 9.5px; letter-spacing: 1.8px;
+    text-transform: uppercase; color: var(--text-dim); padding: 10px; border-radius: 8px;
+    border: 1px solid var(--line); background: transparent; transition: 0.18s;
+  }
+  .ghost-btn:hover { color: #a98bff; border-color: var(--line-strong); background: rgba(154,124,255,0.08); }
+
+  /* ---------- MAIN PANEL ---------- */
+  .main {
+    position: relative; min-height: 0; display: flex; flex-direction: column;
+    background: linear-gradient(170deg, rgba(20,26,68,0.26), rgba(43,20,88,0.18));
+    border: 1px solid var(--line); border-radius: 22px;
+    backdrop-filter: blur(8px); overflow: hidden;
+  }
+  .scanline {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.3; z-index: 1;
+    background: repeating-linear-gradient(180deg, rgba(130,104,255,0.05) 0 1px, transparent 1px 4px);
+  }
+
+  /* ---------- REACTOR STAGE (centred, docks on first message) ---------- */
+  .stage {
+    position: relative; z-index: 2; flex: 1 1 auto; min-height: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; padding: 28px 28px 16px; text-align: center;
+    transition: padding 0.5s cubic-bezier(.2,.8,.2,1);
+  }
+  .stage.chat-mode {
+    flex: 0 0 auto;
+    flex-direction: row; align-items: center; justify-content: flex-start;
+    gap: 15px; padding: 14px 22px; text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
   .orb-wrap {
-    position: absolute;
-    left: 50%; top: 50%; transform: translate(-50%, -50%);
-    width: 320px; height: 320px;
-    display: flex; align-items: center; justify-content: center;
-    transition: left 0.6s cubic-bezier(.4,0,.2,1), top 0.6s cubic-bezier(.4,0,.2,1),
-                width 0.6s cubic-bezier(.4,0,.2,1), height 0.6s cubic-bezier(.4,0,.2,1),
-                transform 0.6s cubic-bezier(.4,0,.2,1);
-    z-index: 5;
+    position: relative; flex-shrink: 0; width: 226px; height: 226px;
+    transition: width 0.55s cubic-bezier(.2,.8,.2,1), height 0.55s cubic-bezier(.2,.8,.2,1);
   }
-  .stage.chat-mode .orb-wrap {
-    left: 34px; top: 26px; transform: translate(0,0);
-    width: 64px; height: 64px;
-  }
+  .stage.chat-mode .orb-wrap { width: 72px; height: 72px; }
 
   .reactor {
-    position: absolute;
-    left: 50%; top: 50%; transform: translate(-50%, -50%);
-    width: 86%; height: 86%;
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 88%; height: 88%;
     filter: drop-shadow(0 0 26px var(--accent-glow)) drop-shadow(0 18px 30px rgba(0,0,0,0.55));
   }
-  .stage.chat-mode .orb-wrap .reactor {
-    width: 100%; height: 100%;
-    filter: drop-shadow(0 0 9px var(--accent-glow));
-  }
+  .stage.chat-mode .orb-wrap .reactor { width: 100%; height: 100%; filter: drop-shadow(0 0 9px var(--accent-glow)); }
   .reactor-glow {
     position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
-    width: 84%; height: 84%; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 45%,
-      rgba(140,244,255,0.40), rgba(154, 124, 255,0.12) 50%, transparent 72%);
+    width: 86%; height: 86%; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, rgba(154,124,255,0.42), rgba(95,131,255,0.14) 50%, transparent 72%);
     animation: rxBreathe 5s ease-in-out infinite;
   }
   @keyframes rxBreathe {
@@ -131,7 +215,6 @@
     50%     { opacity: 1;   transform: translate(-50%,-50%) scale(1.08); }
   }
 
-  /* interior light layers */
   .rx-glass { animation: rxGlow 4.6s ease-in-out infinite; }
   @keyframes rxGlow { 0%,100% { opacity: .80; } 50% { opacity: 1; } }
   .rx-core  { animation: rxCore 4.6s ease-in-out infinite; }
@@ -139,115 +222,113 @@
   .rx-sweep { animation: rxSweep 6s cubic-bezier(.5,0,.5,1) infinite; }
   @keyframes rxSweep {
     0%   { transform: translateY(-150px); opacity: 0; }
-    14%  { opacity: 1; }
-    86%  { opacity: 1; }
+    14%  { opacity: 1; } 86% { opacity: 1; }
     100% { transform: translateY(210px);  opacity: 0; }
   }
-
-  /* state mapping — idle / listening / thinking / speaking */
-  .orb-wrap.listening .rx-glass,
-  .orb-wrap.listening .rx-core   { animation-duration: 2.4s; }
-  .orb-wrap.listening .rx-sweep  { animation-duration: 3.2s; }
+  .orb-wrap.listening .rx-glass, .orb-wrap.listening .rx-core { animation-duration: 2.4s; }
+  .orb-wrap.listening .rx-sweep { animation-duration: 3.2s; }
   .orb-wrap.listening .reactor-glow { animation-duration: 2.4s; }
-  .orb-wrap.thinking  .rx-glass,
-  .orb-wrap.thinking  .rx-core   { animation-duration: 1s; }
-  .orb-wrap.thinking  .rx-sweep  { animation-duration: 1.3s; }
-  .orb-wrap.thinking  .reactor-glow { animation-duration: 1.2s; }
-  .orb-wrap.speaking  .rx-glass,
-  .orb-wrap.speaking  .rx-core   { animation-duration: 1.8s; }
-  .orb-wrap.speaking  .rx-sweep  { animation-duration: 2.4s; }
-  .orb-wrap.speaking  .reactor-glow { animation-duration: 1.8s; }
-  .orb-wrap.speaking  .reactor,
-  .orb-wrap.thinking  .reactor {
+  .orb-wrap.thinking .rx-glass, .orb-wrap.thinking .rx-core { animation-duration: 1s; }
+  .orb-wrap.thinking .rx-sweep { animation-duration: 1.3s; }
+  .orb-wrap.thinking .reactor-glow { animation-duration: 1.2s; }
+  .orb-wrap.speaking .rx-glass, .orb-wrap.speaking .rx-core { animation-duration: 1.8s; }
+  .orb-wrap.speaking .rx-sweep { animation-duration: 2.4s; }
+  .orb-wrap.speaking .reactor-glow { animation-duration: 1.8s; }
+  .orb-wrap.speaking .reactor, .orb-wrap.thinking .reactor {
     filter: drop-shadow(0 0 34px var(--accent-glow)) drop-shadow(0 18px 30px rgba(0,0,0,0.55));
   }
-
-  .orb-status {
-    position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
-    margin-top: 8px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--text-dim); white-space: nowrap; opacity: 0; transition: opacity 0.3s ease, color 0.2s ease;
-  }
-  .stage.chat-mode .orb-status { opacity: 0.85; }
-  .orb-wrap.listening .orb-status, .orb-wrap.thinking .orb-status, .orb-wrap.speaking .orb-status { color: var(--accent); }
-
+  .orb-status { display: none; }
 
   /* ---------- HERO TAGLINE ---------- */
   .hero-tagline {
-    position: absolute; left: 50%; bottom: 19%; transform: translateX(-50%);
-    color: var(--text-dim); font-size: 14px; letter-spacing: 0.3px; text-align: center;
-    width: 80%; transition: opacity 0.3s ease;
+    max-width: 440px; color: var(--text-dim); font-size: 13.5px; letter-spacing: 0.2px;
+    transition: opacity 0.35s ease, max-height 0.5s ease; overflow: hidden; max-height: 90px;
   }
-  .stage.chat-mode .hero-tagline { opacity: 0; pointer-events: none; }
+  .stage.chat-mode .hero-tagline {
+    max-width: none; max-height: 40px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--faint);
+  }
+  .stage.chat-mode .hero-tagline .tagline-full { display: none; }
+  .tagline-docked { display: none; }
+  .stage.chat-mode .hero-tagline .tagline-docked { display: block; }
+  .tagline-docked b { color: #a98bff; font-weight: 500; letter-spacing: 2.4px; }
 
   /* ---------- CHAT MESSAGES ---------- */
   .messages {
-    position: absolute; inset: 0;
-    padding: 110px 8% 108px;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 14px;
+    position: relative; z-index: 2; flex: 1; min-height: 0; overflow-y: auto;
+    padding: 0 26px; display: flex; flex-direction: column; gap: 14px;
     opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
   }
-  .stage.chat-mode .messages { opacity: 1; pointer-events: auto; }
-  .messages::-webkit-scrollbar { width: 6px; }
-  .messages::-webkit-scrollbar-thumb { background: rgba(154, 124, 255,0.25); border-radius: 3px; }
+  .stage.chat-mode ~ .messages { opacity: 1; pointer-events: auto; padding: 20px 26px 4px; }
+  .messages::-webkit-scrollbar { width: 7px; }
+  .messages::-webkit-scrollbar-thumb { background: rgba(154,124,255,0.24); border-radius: 4px; }
 
-  .bubble { max-width: 68%; padding: 11px 15px; border-radius: 14px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; word-wrap: break-word; box-shadow: 0 6px 16px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.03) inset; transition: transform 0.15s ease, box-shadow 0.15s ease; }
-  .bubble:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.05) inset; }
-  .bubble.user { align-self: flex-end; background: rgba(154, 124, 255, 0.16); backdrop-filter: blur(6px); border: 1px solid rgba(154, 124, 255,0.35); color: #efe9ff; border-bottom-right-radius: 3px; }
-  .bubble.aura { align-self: flex-start; background: rgba(20,32,42,0.55); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.08); color: #e2e0fa; border-bottom-left-radius: 3px; }
-  .bubble.system-action { align-self: center; background: transparent; border: 1px dashed rgba(154, 124, 255,0.3); color: var(--text-dim); font-size: 11.5px; letter-spacing: 0.3px; padding: 5px 12px; }
-  .bubble.error { border-color: rgba(245,115,79,0.4); color: #ffb9a3; }
+  .bubble { max-width: 82%; padding: 11px 15px; border-radius: 14px; font-size: 13.5px; line-height: 1.55;
+    white-space: pre-wrap; word-wrap: break-word; }
+  .bubble.user { align-self: flex-end;
+    background: linear-gradient(135deg, rgba(95,131,255,0.20), rgba(154,124,255,0.16));
+    border: 1px solid var(--line-strong); color: #efe9ff; border-top-right-radius: 4px; }
+  .bubble.aura { align-self: flex-start;
+    background: linear-gradient(135deg, rgba(43,20,88,0.60), rgba(20,26,68,0.46));
+    border: 1px solid var(--line); color: #e2e0fa; border-top-left-radius: 4px; }
+  .bubble.system-action { align-self: center; background: transparent;
+    border: 1px dashed var(--line-strong); color: var(--text-dim);
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.6px; padding: 5px 12px; }
+  .bubble.error { border-color: rgba(255,111,145,0.42); color: #ffb3c8;
+    background: linear-gradient(135deg, rgba(90,20,55,0.42), rgba(43,20,88,0.4)); }
   .attachment-tag {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; color: var(--accent); background: rgba(154, 124, 255,0.1);
-    border: 1px solid rgba(154, 124, 255,0.3); border-radius: 10px; padding: 2px 8px; margin-bottom: 6px;
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--accent);
+    background: rgba(154,124,255,0.1); border: 1px solid var(--line-strong);
+    border-radius: 10px; padding: 2px 8px; margin-bottom: 6px;
   }
 
-  /* ---------- INPUT BAR ---------- */
+  /* ---------- COMPOSER ---------- */
   .input-bar {
-    position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
-    width: min(680px, 88%);
-    display: flex; flex-direction: column; gap: 6px;
-    z-index: 10;
+    position: relative; z-index: 2; flex-shrink: 0;
+    padding: 14px 22px 16px; display: flex; flex-direction: column; gap: 6px;
   }
   .attachment-chip {
     display: none; align-items: center; gap: 8px;
-    background: rgba(14,22,30,0.9); border: 1px solid rgba(154, 124, 255,0.3); border-radius: 16px;
+    background: rgba(12,10,34,0.9); border: 1px solid var(--line-strong); border-radius: 16px;
     padding: 5px 12px; font-size: 12px; color: #e2e0fa; align-self: flex-start;
   }
   .attachment-chip.visible { display: flex; }
   .attachment-chip .remove { cursor: pointer; color: var(--text-dim); font-weight: bold; }
   .attachment-chip .remove:hover { color: var(--danger); }
   .input-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 8px 8px 14px;
-    background: rgba(14, 22, 30, 0.85);
-    border: 1px solid rgba(154, 124, 255, 0.28);
-    border-radius: 28px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.35);
-    backdrop-filter: blur(8px);
+    display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px;
+    background: rgba(10,9,32,0.72); border: 1px solid var(--line-strong); border-radius: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-  .input-row input {
-    flex: 1; background: transparent; border: none; outline: none;
-    color: #efe9ff; font-size: 14px; font-family: inherit;
+  .input-row:focus-within {
+    border-color: rgba(169,139,255,0.6);
+    box-shadow: 0 0 0 3px rgba(154,124,255,0.1), 0 0 26px rgba(154,124,255,0.14);
   }
-  .input-row input::placeholder { color: var(--text-dim); }
+  .input-row input { flex: 1; background: transparent; border: none; outline: none;
+    color: #efe9ff; font-size: 13.5px; font-family: inherit; }
+  .input-row input::placeholder { color: var(--faint); }
   .icon-btn {
-    width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%;
-    border: 1px solid rgba(154, 124, 255,0.4); background: rgba(154, 124, 255,0.06);
+    width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px;
+    border: 1px solid var(--line-strong); background: rgba(154,124,255,0.06);
     display: flex; align-items: center; justify-content: center; cursor: pointer;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.04) inset;
     transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
   }
-  .icon-btn:hover { transform: translateY(-1px); }
-  .icon-btn:hover { background: rgba(154, 124, 255,0.16); }
+  .icon-btn:hover { transform: translateY(-1px); background: rgba(154,124,255,0.16); }
   .icon-btn svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; }
-  .icon-btn.active { background: rgba(154, 124, 255,0.3); box-shadow: 0 0 14px var(--accent-glow); }
-  .icon-btn.send svg { fill: var(--accent); stroke: none; }
+  .icon-btn.active { background: rgba(154,124,255,0.3); box-shadow: 0 0 14px var(--accent-glow); }
+  .icon-btn.send { border: 0; background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    box-shadow: 0 5px 18px rgba(154,124,255,0.34); }
+  .icon-btn.send svg { fill: #fff; stroke: none; }
+
+  @media (max-width: 900px) {
+    .screen { grid-template-columns: 1fr; }
+    .rail { display: none; }
+  }
 
   /* ---------- HISTORY PANEL ---------- */
   .history-panel {
-    position: absolute; top: 0; left: -320px; width: 300px; height: 100%;
+    position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
     background: rgba(6, 12, 18, 0.82); border-right: 1px solid rgba(154, 124, 255, 0.25);
     box-shadow: 8px 0 30px rgba(0,0,0,0.4);
     backdrop-filter: blur(12px); transition: left 0.3s ease; display: flex; flex-direction: column; z-index: 25;
@@ -272,7 +353,7 @@
   .history-item .del:hover { color: var(--danger); }
 
   /* ---------- SETTINGS MODAL ---------- */
-  .settings-overlay { position: absolute; inset: 0; background: rgba(3, 6, 9, 0.78); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 30; perspective: 900px; }
+  .settings-overlay { position: fixed; inset: 0; background: rgba(3, 6, 9, 0.78); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 30; perspective: 900px; }
   .settings-overlay.open { display: flex; }
   .settings-overlay.open .settings-modal { animation: modalIn 0.32s cubic-bezier(.2,.8,.3,1) both; }
   @keyframes modalIn {
@@ -301,7 +382,7 @@
   .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
   .checkbox-row input { accent-color: var(--accent); width: 15px; height: 15px; }
   .checkbox-row label { font-size: 12.5px; color: #e2e0fa; }
-  .warning-box { background: rgba(245, 115, 79, 0.08); border: 1px solid rgba(245, 115, 79, 0.3); border-radius: 4px; padding: 9px 11px; font-size: 11.5px; color: #ffcfc0; line-height: 1.5; margin-bottom: 12px; }
+  .warning-box { background: rgba(255, 111, 145, 0.08); border: 1px solid rgba(255, 111, 145, 0.32); border-radius: 4px; padding: 9px 11px; font-size: 11.5px; color: #ffcfc0; line-height: 1.5; margin-bottom: 12px; }
   .settings-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
   .settings-btn { background: var(--accent); color: #04141a; border: none; border-radius: 3px; padding: 8px 16px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; }
   .settings-btn.ghost { background: transparent; color: var(--text-dim); border: 1px solid rgba(154, 124, 255,0.25); }
@@ -325,7 +406,7 @@
 </style>
 </head>
 <body>
-  <div id="boot">
+<div id="boot">
   <svg class="boot-mark" viewBox="0 0 400 400" aria-hidden="true">
     <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
           fill="#241f5c" stroke="#9a7cff" stroke-width="16"/>
@@ -339,51 +420,17 @@
   </div>
   <div class="boot-bar"><i></i></div>
 </div>
-<div class="screen">
 
-    <div class="topbar">
-      <div class="brand">
-        <div class="status-item clickable" id="historyBtn" style="margin-right:6px;">
-          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-        </div>
-        <svg class="brand-mark" viewBox="0 0 400 400" aria-hidden="true">
-          <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
-                fill="#241f5c" stroke="#9a7cff" stroke-width="18"/>
-          <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
-                fill="#181545"/>
-          <path d="M120 148 L280 148 L200 334 Z" fill="#9a7cff"/>
-        </svg>
-        <div class="brand-text">
-          <div class="brand-name">AURA</div>
-          <div class="brand-sub">ADAPTIVE UNIFIED RESPONSE ASSISTANT</div>
-        </div>
-      </div>
-      <div class="clock-block">
-        <div class="clock-time" id="clockTime">--:-- <small id="clockAmPm"></small></div>
-        <div class="clock-date" id="clockDate">—</div>
-      </div>
-      <div class="status-icons">
-        <div class="status-item" id="controlIndicator">
-          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <span id="controlIndicatorLabel">PC Control: Off</span>
-        </div>
-        <div class="status-item clickable" id="settingsBtn">
-          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          <span>Settings</span>
-        </div>
-      </div>
-    </div>
+<canvas id="bgCanvas"></canvas>
+<div class="vignette"></div>
 
-    <div class="stage" id="stage">
-      <canvas id="bgCanvas"></canvas>
-
-      <div class="history-panel" id="historyPanel">
+<div class="history-panel" id="historyPanel">
         <div class="history-header"><span>CONVERSATIONS</span><span class="close-history" id="closeHistory">&times;</span></div>
         <div class="new-chat-btn" id="newChatBtn">+ New chat</div>
         <div class="history-list" id="historyList"></div>
       </div>
 
-      <div class="settings-overlay" id="settingsOverlay">
+<div class="settings-overlay" id="settingsOverlay">
         <div class="settings-modal">
           <div class="settings-title">AURA SETTINGS</div>
 
@@ -481,13 +528,88 @@
         </div>
       </div>
 
-      <div class="hero-tagline" id="heroTagline">Ask <span id="taglineWakeWord">AURA</span> anything — type below, click the mic, attach a file, or say the wake word.</div>
+<div class="screen">
 
-      <div class="messages" id="messages"></div>
+  <!-- ================= TOP BAR ================= -->
+  <header class="topbar">
+    <div class="status-item clickable" id="historyBtn" title="Conversations">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </div>
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 400 400" aria-hidden="true">
+        <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
+              fill="#241f5c" stroke="#9a7cff" stroke-width="18"/>
+        <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z" fill="#181545"/>
+        <path d="M120 148 L280 148 L200 334 Z" fill="#9a7cff"/>
+      </svg>
+      <div class="brand-text">
+        <div class="brand-name">AURA</div>
+        <div class="brand-sub">ADAPTIVE UNIFIED RESPONSE ASSISTANT</div>
+      </div>
+    </div>
 
+    <div class="spacer"></div>
+
+    <div class="state-pill"><i class="dot"></i><span id="orbStatusLabel">Standby</span></div>
+
+    <div class="clock-block">
+      <div class="clock-time" id="clockTime">--:-- <small id="clockAmPm"></small></div>
+      <div class="clock-date" id="clockDate">—</div>
+    </div>
+
+    <div class="status-icons">
+      <div class="status-item" id="controlIndicator">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span id="controlIndicatorLabel">PC Control: Off</span>
+      </div>
+      <div class="status-item clickable" id="settingsBtn">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>Settings</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= SIDE RAIL ================= -->
+  <aside class="rail">
+    <section class="panel">
+      <h2>Core</h2>
+      <div class="readout"><span class="k">Link</span><span class="v" id="rLink">checking…</span></div>
+      <div class="readout"><span class="k">Provider</span><span class="v blue" id="rProvider">—</span></div>
+      <div class="readout"><span class="k">Session</span><span class="v" id="rSession">—</span></div>
+      <div class="readout"><span class="k">Exchanges</span><span class="v" id="rTurns">00</span></div>
+      <div class="readout"><span class="k">Last response</span><span class="v blue" id="rLatency">—</span></div>
+      <div class="meter"><i id="rMeter"></i></div>
+    </section>
+
+    <section class="panel">
+      <h2>Directives</h2>
+      <div class="chips">
+        <button class="chip" data-q="Give me a quick brief on what you can do on this machine."><span>Orient</span>What can you do?</button>
+        <button class="chip" data-q="Explain a technical concept to me in depth, step by step. Ask me which one first."><span>Explain</span>Break something down</button>
+        <button class="chip" data-q="Help me plan a project. Ask me what it is, then give me a phased plan."><span>Plan</span>Map out a project</button>
+        <button class="chip" data-q="Help me debug an issue on my PC. Ask for the symptoms and what I've already tried."><span>Diagnose</span>Troubleshoot an issue</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Protocol</h2>
+      <div class="readout"><span class="k">Persona</span><span class="v">Calm · Direct</span></div>
+      <div class="readout"><span class="k">Wake word</span><span class="v" id="rWakeWord">aura</span></div>
+      <div class="readout"><span class="k">Memory</span><span class="v blue">Local only</span></div>
+    </section>
+
+    <div class="rail-foot">
+      <button class="ghost-btn" id="railNewChat">New session</button>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+    <div class="scanline"></div>
+
+    <div class="stage" id="stage">
       <div class="orb-wrap" id="orbWrap">
         <div class="reactor-glow"></div>
-
         <!-- ARC REACTOR: armored shield housing, gill corners, triangular core -->
         <svg class="reactor" id="reactor" viewBox="0 0 400 400" aria-hidden="true">
           <defs>
@@ -662,31 +784,36 @@
           <path d="M20 190 L60 62" fill="none" stroke="#ffffff" stroke-opacity=".3"
                 stroke-width="2.5" stroke-linecap="round"/>
         </svg>
-
-        <div class="orb-status" id="orbStatusLabel">Standby</div>
       </div>
 
-      <div class="input-bar">
-        <div class="attachment-chip" id="attachmentChip">
-          <span id="attachmentLabel"></span>
-          <span class="remove" id="attachmentRemove">&times;</span>
-        </div>
-        <div class="input-row">
-          <div class="icon-btn" id="attachBtn" title="Attach a file">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-          </div>
-          <div class="icon-btn" id="micBtn" title="Voice input">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-          </div>
-          <input type="text" id="textInput" placeholder="Message AURA…" autocomplete="off">
-          <div class="icon-btn send" id="sendBtn" title="Send">
-            <svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"></path></svg>
-          </div>
-        </div>
+      <div class="hero-tagline" id="heroTagline">
+        <span class="tagline-full">Ask <span id="taglineWakeWord">AURA</span> anything — type below, click the mic, attach a file, or say the wake word.</span>
+        <span class="tagline-docked"><b>AURA</b><br><span id="dockedSession">SESSION</span></span>
       </div>
-
     </div>
-  </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="input-bar">
+      <div class="attachment-chip" id="attachmentChip">
+        <span id="attachmentLabel"></span>
+        <span class="remove" id="attachmentRemove">&times;</span>
+      </div>
+      <div class="input-row">
+        <div class="icon-btn" id="attachBtn" title="Attach a file">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+        </div>
+        <div class="icon-btn" id="micBtn" title="Voice input">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+        </div>
+        <input type="text" id="textInput" placeholder="Message AURA…" autocomplete="off">
+        <div class="icon-btn send" id="sendBtn" title="Send">
+          <svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"></path></svg>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
 
 <script>
   function pad(n){ return n.toString().padStart(2,'0'); }
@@ -1312,6 +1439,70 @@
       boot.classList.add('done');
       setTimeout(() => boot.remove(), 800);
     }, 3000);
+  })();
+</script>
+
+<script>
+  /* ============== SIDE RAIL: live readouts ==============
+     Everything here is measured or read from real settings — nothing invented.
+     It observes the app rather than hooking into it, so the chat logic above
+     stays untouched. */
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    const sessionId = 'AX-' + Math.floor(Date.now() / 1000).toString(36).toUpperCase().slice(-5);
+    $('rSession').textContent = sessionId;
+    const docked = $('dockedSession');
+    if (docked) docked.textContent = 'SESSION ' + sessionId;
+
+    async function refresh() {
+      try {
+        const cfg = await window.aura.getSettings();
+        const p = cfg.provider || 'anthropic';
+        $('rProvider').textContent = p;
+        const linked = !!(cfg.hasKey && cfg.hasKey[p]);
+        $('rLink').textContent = linked ? 'established' : 'no key';
+        $('rLink').classList.toggle('blue', linked);
+        if (cfg.wakeWord) $('rWakeWord').textContent = cfg.wakeWord;
+      } catch (e) {
+        $('rLink').textContent = 'unavailable';
+      }
+    }
+    refresh();
+    const save = $('settingsSave');
+    if (save) save.addEventListener('click', () => setTimeout(refresh, 400));
+
+    // exchanges: count the user bubbles actually in the transcript
+    const messages = $('messages');
+    new MutationObserver(() => {
+      const n = messages.querySelectorAll('.bubble.user').length;
+      $('rTurns').textContent = String(n).padStart(2, '0');
+      $('rMeter').style.width = Math.min(100, 8 + n * 9) + '%';
+    }).observe(messages, { childList: true });
+
+    // latency: timed off the reactor's own thinking state
+    const orb = $('orbWrap');
+    let t0 = 0;
+    new MutationObserver(() => {
+      const thinking = orb.classList.contains('thinking');
+      if (thinking && !t0) {
+        t0 = performance.now();
+      } else if (!thinking && t0) {
+        const ms = Math.round(performance.now() - t0);
+        t0 = 0;
+        $('rLatency').textContent = ms < 1000 ? ms + ' ms' : (ms / 1000).toFixed(1) + ' s';
+      }
+    }).observe(orb, { attributes: true, attributeFilter: ['class'] });
+
+    // directives -> composer
+    document.querySelectorAll('.chip').forEach((c) => {
+      c.addEventListener('click', () => {
+        $('textInput').value = c.getAttribute('data-q');
+        $('sendBtn').click();
+      });
+    });
+
+    const railNew = $('railNewChat');
+    if (railNew) railNew.addEventListener('click', () => $('newChatBtn').click());
   })();
 </script>
 </body>
