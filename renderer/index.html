@@ -5,45 +5,89 @@
 <title>AURA</title>
 <style>
   :root{
-    --bg: #060a10;
-    --cyan: #4fd3f5;
-    --cyan-dim: #1d5c6e;
-    --cyan-glow: rgba(79, 211, 245, 0.55);
-    --text-dim: #7fa6b3;
-    --danger: #f5734f;
+    --bg: #05060f;
+    --accent: #9a7cff;          /* violet — AURA's voice */
+    --accent-2: #5f83ff;        /* deep blue — data & structure */
+    --accent-dim: #33296b;
+    --accent-glow: rgba(154, 124, 255, 0.55);
+    --blue-glow: rgba(95, 131, 255, 0.45);
+    --text-dim: #8d90c4;
+    --danger: #ff6f91;
   }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; padding: 0; width: 100%; height: 100%;
-    background: radial-gradient(ellipse at 50% 0%, #0a1622 0%, #060a10 55%, #030507 100%);
+    background: radial-gradient(ellipse at 50% 0%, #141a44 0%, #0a0a20 48%, #05050e 100%);
     font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     overflow: hidden;
   }
   .screen { width: 100%; height: 100vh; display: flex; flex-direction: column; }
 
+
+  /* ---------- BOOT SEQUENCE ---------- */
+  #boot {
+    position: fixed; inset: 0; z-index: 900; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, #141a44 0%, #07071a 55%, #04040c 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 22px; transition: opacity 0.7s ease;
+  }
+  #boot.done { opacity: 0; }
+  .boot-mark { width: 92px; height: 92px; opacity: 0; animation: bootMark 1s ease forwards; }
+  @keyframes bootMark {
+    from { opacity: 0; transform: scale(0.82); filter: drop-shadow(0 0 0 transparent); }
+    to   { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 22px var(--accent-glow)); }
+  }
+  .boot-lines {
+    font-family: 'Consolas', 'SF Mono', monospace; font-size: 10.5px; letter-spacing: 2.2px;
+    color: #6f74ad; text-align: center; line-height: 2; min-height: 84px;
+  }
+  .boot-lines div { opacity: 0; animation: bootLine .45s ease forwards; }
+  .boot-lines div b { color: var(--accent); font-weight: 500; }
+  .boot-lines div:nth-child(1) { animation-delay: .55s; }
+  .boot-lines div:nth-child(2) { animation-delay: 1.0s; }
+  .boot-lines div:nth-child(3) { animation-delay: 1.45s; }
+  .boot-lines div:nth-child(4) { animation-delay: 1.9s; }
+  @keyframes bootLine { from { opacity: 0; transform: translateY(4px); } to { opacity: .95; transform: none; } }
+  .boot-bar { width: 220px; height: 2px; background: rgba(154,124,255,.16); overflow: hidden; border-radius: 2px; }
+  .boot-bar i {
+    display: block; height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    animation: bootFill 2.5s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes bootFill { to { width: 100%; } }
+
   /* ---------- TOP BAR ---------- */
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
     padding: 16px 28px;
-    border-bottom: 1px solid rgba(79, 211, 245, 0.18);
+    border-bottom: 1px solid rgba(154, 124, 255, 0.18);
     background: linear-gradient(180deg, rgba(10,20,30,0.6), rgba(10,20,30,0));
     flex-shrink: 0;
   }
   .brand { display: flex; align-items: center; gap: 12px; }
   .brand-mark {
     width: 30px; height: 30px; flex-shrink: 0;
-    filter: drop-shadow(0 0 7px var(--cyan-glow));
+    filter: drop-shadow(0 0 7px var(--accent-glow));
   }
-  .brand-name { font-size: 19px; letter-spacing: 5px; font-weight: 500; color: #eaf6fb; }
+  .brand-text { display: flex; flex-direction: column; justify-content: center; gap: 1px; }
+  .brand-name {
+    font-size: 19px; letter-spacing: 5px; font-weight: 500; line-height: 1;
+    background: linear-gradient(95deg, #cfd4ff, #a98bff 62%, #d9caff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .brand-sub {
+    font-size: 7.5px; letter-spacing: 2.4px; color: #5a5f96;
+    font-family: 'Consolas', 'SF Mono', monospace; white-space: nowrap;
+  }
   .clock-block { display: flex; align-items: baseline; gap: 12px; }
-  .clock-time { font-size: 22px; font-weight: 600; color: var(--cyan); letter-spacing: 1px; }
+  .clock-time { font-size: 22px; font-weight: 600; color: var(--accent); letter-spacing: 1px; }
   .clock-time small{ font-size: 12px; font-weight: 500; margin-left: 4px; color: var(--text-dim); }
   .clock-date { font-size: 12px; color: var(--text-dim); }
   .status-icons { display: flex; align-items: center; gap: 22px; }
   .status-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; color: var(--text-dim); }
-  .status-item svg { width: 18px; height: 18px; stroke: var(--cyan); fill: none; }
+  .status-item svg { width: 18px; height: 18px; stroke: var(--accent); fill: none; }
   .status-item.clickable { cursor: pointer; }
-  .status-item.clickable:hover { color: var(--cyan); }
+  .status-item.clickable:hover { color: var(--accent); }
 
   /* ---------- STAGE ---------- */
   .stage { flex: 1; position: relative; overflow: hidden; }
@@ -69,17 +113,17 @@
     position: absolute;
     left: 50%; top: 50%; transform: translate(-50%, -50%);
     width: 86%; height: 86%;
-    filter: drop-shadow(0 0 26px var(--cyan-glow)) drop-shadow(0 18px 30px rgba(0,0,0,0.55));
+    filter: drop-shadow(0 0 26px var(--accent-glow)) drop-shadow(0 18px 30px rgba(0,0,0,0.55));
   }
   .stage.chat-mode .orb-wrap .reactor {
     width: 100%; height: 100%;
-    filter: drop-shadow(0 0 9px var(--cyan-glow));
+    filter: drop-shadow(0 0 9px var(--accent-glow));
   }
   .reactor-glow {
     position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
     width: 84%; height: 84%; pointer-events: none;
     background: radial-gradient(ellipse at 50% 45%,
-      rgba(140,244,255,0.40), rgba(79,211,245,0.12) 50%, transparent 72%);
+      rgba(140,244,255,0.40), rgba(154, 124, 255,0.12) 50%, transparent 72%);
     animation: rxBreathe 5s ease-in-out infinite;
   }
   @keyframes rxBreathe {
@@ -115,7 +159,7 @@
   .orb-wrap.speaking  .reactor-glow { animation-duration: 1.8s; }
   .orb-wrap.speaking  .reactor,
   .orb-wrap.thinking  .reactor {
-    filter: drop-shadow(0 0 34px var(--cyan-glow)) drop-shadow(0 18px 30px rgba(0,0,0,0.55));
+    filter: drop-shadow(0 0 34px var(--accent-glow)) drop-shadow(0 18px 30px rgba(0,0,0,0.55));
   }
 
   .orb-status {
@@ -124,7 +168,7 @@
     color: var(--text-dim); white-space: nowrap; opacity: 0; transition: opacity 0.3s ease, color 0.2s ease;
   }
   .stage.chat-mode .orb-status { opacity: 0.85; }
-  .orb-wrap.listening .orb-status, .orb-wrap.thinking .orb-status, .orb-wrap.speaking .orb-status { color: var(--cyan); }
+  .orb-wrap.listening .orb-status, .orb-wrap.thinking .orb-status, .orb-wrap.speaking .orb-status { color: var(--accent); }
 
 
   /* ---------- HERO TAGLINE ---------- */
@@ -145,18 +189,18 @@
   }
   .stage.chat-mode .messages { opacity: 1; pointer-events: auto; }
   .messages::-webkit-scrollbar { width: 6px; }
-  .messages::-webkit-scrollbar-thumb { background: rgba(79,211,245,0.25); border-radius: 3px; }
+  .messages::-webkit-scrollbar-thumb { background: rgba(154, 124, 255,0.25); border-radius: 3px; }
 
   .bubble { max-width: 68%; padding: 11px 15px; border-radius: 14px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; word-wrap: break-word; box-shadow: 0 6px 16px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.03) inset; transition: transform 0.15s ease, box-shadow 0.15s ease; }
   .bubble:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.05) inset; }
-  .bubble.user { align-self: flex-end; background: rgba(79, 211, 245, 0.16); backdrop-filter: blur(6px); border: 1px solid rgba(79,211,245,0.35); color: #eafcff; border-bottom-right-radius: 3px; }
-  .bubble.aura { align-self: flex-start; background: rgba(20,32,42,0.55); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.08); color: #dff3f8; border-bottom-left-radius: 3px; }
-  .bubble.system-action { align-self: center; background: transparent; border: 1px dashed rgba(79,211,245,0.3); color: var(--text-dim); font-size: 11.5px; letter-spacing: 0.3px; padding: 5px 12px; }
+  .bubble.user { align-self: flex-end; background: rgba(154, 124, 255, 0.16); backdrop-filter: blur(6px); border: 1px solid rgba(154, 124, 255,0.35); color: #efe9ff; border-bottom-right-radius: 3px; }
+  .bubble.aura { align-self: flex-start; background: rgba(20,32,42,0.55); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.08); color: #e2e0fa; border-bottom-left-radius: 3px; }
+  .bubble.system-action { align-self: center; background: transparent; border: 1px dashed rgba(154, 124, 255,0.3); color: var(--text-dim); font-size: 11.5px; letter-spacing: 0.3px; padding: 5px 12px; }
   .bubble.error { border-color: rgba(245,115,79,0.4); color: #ffb9a3; }
   .attachment-tag {
     display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; color: var(--cyan); background: rgba(79,211,245,0.1);
-    border: 1px solid rgba(79,211,245,0.3); border-radius: 10px; padding: 2px 8px; margin-bottom: 6px;
+    font-size: 11px; color: var(--accent); background: rgba(154, 124, 255,0.1);
+    border: 1px solid rgba(154, 124, 255,0.3); border-radius: 10px; padding: 2px 8px; margin-bottom: 6px;
   }
 
   /* ---------- INPUT BAR ---------- */
@@ -168,8 +212,8 @@
   }
   .attachment-chip {
     display: none; align-items: center; gap: 8px;
-    background: rgba(14,22,30,0.9); border: 1px solid rgba(79,211,245,0.3); border-radius: 16px;
-    padding: 5px 12px; font-size: 12px; color: #dff3f8; align-self: flex-start;
+    background: rgba(14,22,30,0.9); border: 1px solid rgba(154, 124, 255,0.3); border-radius: 16px;
+    padding: 5px 12px; font-size: 12px; color: #e2e0fa; align-self: flex-start;
   }
   .attachment-chip.visible { display: flex; }
   .attachment-chip .remove { cursor: pointer; color: var(--text-dim); font-weight: bold; }
@@ -178,52 +222,52 @@
     display: flex; align-items: center; gap: 10px;
     padding: 8px 8px 8px 14px;
     background: rgba(14, 22, 30, 0.85);
-    border: 1px solid rgba(79, 211, 245, 0.28);
+    border: 1px solid rgba(154, 124, 255, 0.28);
     border-radius: 28px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.35);
     backdrop-filter: blur(8px);
   }
   .input-row input {
     flex: 1; background: transparent; border: none; outline: none;
-    color: #eafcff; font-size: 14px; font-family: inherit;
+    color: #efe9ff; font-size: 14px; font-family: inherit;
   }
   .input-row input::placeholder { color: var(--text-dim); }
   .icon-btn {
     width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%;
-    border: 1px solid rgba(79,211,245,0.4); background: rgba(79,211,245,0.06);
+    border: 1px solid rgba(154, 124, 255,0.4); background: rgba(154, 124, 255,0.06);
     display: flex; align-items: center; justify-content: center; cursor: pointer;
     box-shadow: 0 3px 8px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.04) inset;
     transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
   }
   .icon-btn:hover { transform: translateY(-1px); }
-  .icon-btn:hover { background: rgba(79,211,245,0.16); }
-  .icon-btn svg { width: 16px; height: 16px; stroke: var(--cyan); fill: none; }
-  .icon-btn.active { background: rgba(79,211,245,0.3); box-shadow: 0 0 14px var(--cyan-glow); }
-  .icon-btn.send svg { fill: var(--cyan); stroke: none; }
+  .icon-btn:hover { background: rgba(154, 124, 255,0.16); }
+  .icon-btn svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; }
+  .icon-btn.active { background: rgba(154, 124, 255,0.3); box-shadow: 0 0 14px var(--accent-glow); }
+  .icon-btn.send svg { fill: var(--accent); stroke: none; }
 
   /* ---------- HISTORY PANEL ---------- */
   .history-panel {
     position: absolute; top: 0; left: -320px; width: 300px; height: 100%;
-    background: rgba(6, 12, 18, 0.82); border-right: 1px solid rgba(79, 211, 245, 0.25);
+    background: rgba(6, 12, 18, 0.82); border-right: 1px solid rgba(154, 124, 255, 0.25);
     box-shadow: 8px 0 30px rgba(0,0,0,0.4);
     backdrop-filter: blur(12px); transition: left 0.3s ease; display: flex; flex-direction: column; z-index: 25;
   }
   .history-panel.open { left: 0; }
-  .history-header { padding: 16px 18px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(79,211,245,0.18); }
-  .history-header span { font-size: 12px; letter-spacing: 2px; color: var(--cyan); }
+  .history-header { padding: 16px 18px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(154, 124, 255,0.18); }
+  .history-header span { font-size: 12px; letter-spacing: 2px; color: var(--accent); }
   .history-header .close-history { cursor: pointer; color: var(--text-dim); font-size: 16px; }
   .new-chat-btn {
     margin: 12px 16px; padding: 8px 12px; text-align: center; font-size: 12.5px;
-    color: var(--cyan); border: 1px solid rgba(79,211,245,0.4); border-radius: 6px; cursor: pointer;
+    color: var(--accent); border: 1px solid rgba(154, 124, 255,0.4); border-radius: 6px; cursor: pointer;
   }
-  .new-chat-btn:hover { background: rgba(79,211,245,0.08); }
+  .new-chat-btn:hover { background: rgba(154, 124, 255,0.08); }
   .history-list { flex: 1; overflow-y: auto; padding: 0 10px 10px; }
   .history-item {
     padding: 10px 10px; border-radius: 6px; cursor: pointer; margin-bottom: 4px;
     display: flex; justify-content: space-between; align-items: center; gap: 6px;
   }
-  .history-item:hover { background: rgba(79,211,245,0.08); }
-  .history-item .title { font-size: 12.5px; color: #dff3f8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .history-item:hover { background: rgba(154, 124, 255,0.08); }
+  .history-item .title { font-size: 12.5px; color: #e2e0fa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .history-item .del { color: var(--text-dim); font-size: 13px; cursor: pointer; flex-shrink: 0; }
   .history-item .del:hover { color: var(--danger); }
 
@@ -235,37 +279,37 @@
     from { opacity: 0; transform: rotateX(-10deg) translateY(18px) scale(0.95); }
     to { opacity: 1; transform: rotateX(0) translateY(0) scale(1); }
   }
-  .settings-modal { width: min(480px, 90%); max-height: 84vh; overflow-y: auto; background: rgba(10, 20, 28, 0.82); backdrop-filter: blur(14px); border: 1px solid rgba(79, 211, 245, 0.4); border-radius: 10px; box-shadow: 0 0 50px rgba(79, 211, 245, 0.18), 0 20px 60px rgba(0,0,0,0.5); padding: 22px 24px 18px; }
+  .settings-modal { width: min(480px, 90%); max-height: 84vh; overflow-y: auto; background: rgba(10, 20, 28, 0.82); backdrop-filter: blur(14px); border: 1px solid rgba(154, 124, 255, 0.4); border-radius: 10px; box-shadow: 0 0 50px rgba(154, 124, 255, 0.18), 0 20px 60px rgba(0,0,0,0.5); padding: 22px 24px 18px; }
   .settings-modal::-webkit-scrollbar { width: 5px; }
-  .settings-modal::-webkit-scrollbar-thumb { background: rgba(79,211,245,0.3); border-radius: 3px; }
-  .settings-title { font-size: 13px; letter-spacing: 3px; color: var(--cyan); margin-bottom: 16px; }
-  .settings-section { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid rgba(79,211,245,0.12); }
+  .settings-modal::-webkit-scrollbar-thumb { background: rgba(154, 124, 255,0.3); border-radius: 3px; }
+  .settings-title { font-size: 13px; letter-spacing: 3px; color: var(--accent); margin-bottom: 16px; }
+  .settings-section { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid rgba(154, 124, 255,0.12); }
   .settings-section:last-of-type { border-bottom: none; }
-  .settings-section-title { font-size: 11px; letter-spacing: 1.5px; color: var(--cyan); margin-bottom: 10px; opacity: 0.85; }
+  .settings-section-title { font-size: 11px; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; opacity: 0.85; }
   .settings-label { display: block; font-size: 11px; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 6px; }
   .settings-input, .settings-select, .settings-textarea {
-    width: 100%; background: rgba(79, 211, 245, 0.06); border: 1px solid rgba(79, 211, 245, 0.3);
-    border-radius: 3px; color: #eafcff; font-size: 13px; padding: 9px 10px; margin-bottom: 12px;
+    width: 100%; background: rgba(154, 124, 255, 0.06); border: 1px solid rgba(154, 124, 255, 0.3);
+    border-radius: 3px; color: #efe9ff; font-size: 13px; padding: 9px 10px; margin-bottom: 12px;
     outline: none; font-family: inherit;
   }
   .settings-textarea { resize: vertical; min-height: 50px; font-family: monospace; font-size: 12px; }
-  .settings-input:focus, .settings-select:focus, .settings-textarea:focus { border-color: var(--cyan); }
+  .settings-input:focus, .settings-select:focus, .settings-textarea:focus { border-color: var(--accent); }
   .settings-hint { font-size: 11px; color: var(--text-dim); line-height: 1.5; margin: -6px 0 12px; }
-  .settings-hint a { color: var(--cyan); }
+  .settings-hint a { color: var(--accent); }
   .provider-fields { display: none; }
   .provider-fields.active { display: block; }
   .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .checkbox-row input { accent-color: var(--cyan); width: 15px; height: 15px; }
-  .checkbox-row label { font-size: 12.5px; color: #dff3f8; }
+  .checkbox-row input { accent-color: var(--accent); width: 15px; height: 15px; }
+  .checkbox-row label { font-size: 12.5px; color: #e2e0fa; }
   .warning-box { background: rgba(245, 115, 79, 0.08); border: 1px solid rgba(245, 115, 79, 0.3); border-radius: 4px; padding: 9px 11px; font-size: 11.5px; color: #ffcfc0; line-height: 1.5; margin-bottom: 12px; }
   .settings-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
-  .settings-btn { background: var(--cyan); color: #04141a; border: none; border-radius: 3px; padding: 8px 16px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; }
-  .settings-btn.ghost { background: transparent; color: var(--text-dim); border: 1px solid rgba(79,211,245,0.25); }
+  .settings-btn { background: var(--accent); color: #04141a; border: none; border-radius: 3px; padding: 8px 16px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; }
+  .settings-btn.ghost { background: transparent; color: var(--text-dim); border: 1px solid rgba(154, 124, 255,0.25); }
   .settings-btn.small { padding: 6px 12px; font-size: 11.5px; }
-  .settings-status { margin-top: 10px; font-size: 11.5px; color: var(--cyan); min-height: 14px; }
-  .connector-item { border: 1px solid rgba(79,211,245,0.2); border-radius: 5px; padding: 8px 10px; margin-bottom: 8px; font-size: 12px; }
+  .settings-status { margin-top: 10px; font-size: 11.5px; color: var(--accent); min-height: 14px; }
+  .connector-item { border: 1px solid rgba(154, 124, 255,0.2); border-radius: 5px; padding: 8px 10px; margin-bottom: 8px; font-size: 12px; }
   .connector-item .row1 { display: flex; justify-content: space-between; align-items: center; }
-  .connector-item .name { color: #eafcff; font-weight: 600; }
+  .connector-item .name { color: #efe9ff; font-weight: 600; }
   .connector-item .desc { color: var(--text-dim); font-size: 11px; margin-top: 2px; }
   .connector-item .del { color: var(--text-dim); cursor: pointer; }
   .connector-item .del:hover { color: var(--danger); }
@@ -281,7 +325,21 @@
 </style>
 </head>
 <body>
-  <div class="screen">
+  <div id="boot">
+  <svg class="boot-mark" viewBox="0 0 400 400" aria-hidden="true">
+    <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
+          fill="#241f5c" stroke="#9a7cff" stroke-width="16"/>
+    <path d="M120 148 L280 148 L200 334 Z" fill="#9a7cff"/>
+  </svg>
+  <div class="boot-lines">
+    <div>REACTOR CORE &nbsp;<b>SPUN UP</b></div>
+    <div>NEURAL LINK &nbsp;<b>ESTABLISHED</b></div>
+    <div>VOICE INTERFACE &nbsp;<b>ARMED</b></div>
+    <div><b>AURA ONLINE</b></div>
+  </div>
+  <div class="boot-bar"><i></i></div>
+</div>
+<div class="screen">
 
     <div class="topbar">
       <div class="brand">
@@ -290,12 +348,15 @@
         </div>
         <svg class="brand-mark" viewBox="0 0 400 400" aria-hidden="true">
           <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
-                fill="#1b3a55" stroke="#7fb4d6" stroke-width="18"/>
+                fill="#241f5c" stroke="#9a7cff" stroke-width="18"/>
           <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
-                fill="#123249"/>
-          <path d="M120 148 L280 148 L200 334 Z" fill="#4fd3f5"/>
+                fill="#181545"/>
+          <path d="M120 148 L280 148 L200 334 Z" fill="#9a7cff"/>
         </svg>
-        <div class="brand-name">AURA</div>
+        <div class="brand-text">
+          <div class="brand-name">AURA</div>
+          <div class="brand-sub">ADAPTIVE UNIFIED RESPONSE ASSISTANT</div>
+        </div>
       </div>
       <div class="clock-block">
         <div class="clock-time" id="clockTime">--:-- <small id="clockAmPm"></small></div>
@@ -434,35 +495,35 @@
             <path id="rxBody" d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"/>
 
             <linearGradient id="rxSteel" x1=".1" y1="0" x2=".55" y2="1">
-              <stop offset="0"   stop-color="#eaf5ff"/>
-              <stop offset=".14" stop-color="#a9c6e2"/>
-              <stop offset=".34" stop-color="#3c608a"/>
-              <stop offset=".52" stop-color="#c3d9ef"/>
-              <stop offset=".72" stop-color="#2c4a6e"/>
-              <stop offset="1"   stop-color="#14243a"/>
+              <stop offset="0"   stop-color="#eeeeff"/>
+              <stop offset=".14" stop-color="#a6b0e4"/>
+              <stop offset=".34" stop-color="#3b3d82"/>
+              <stop offset=".52" stop-color="#c4c8f2"/>
+              <stop offset=".72" stop-color="#2b2d66"/>
+              <stop offset="1"   stop-color="#151534"/>
             </linearGradient>
             <linearGradient id="rxSteel2" x1=".85" y1="0" x2=".15" y2="1">
-              <stop offset="0"   stop-color="#f6fbff"/>
-              <stop offset=".3"  stop-color="#93b5d6"/>
-              <stop offset=".62" stop-color="#22405f"/>
-              <stop offset=".85" stop-color="#a8c5e0"/>
-              <stop offset="1"   stop-color="#1b3049"/>
+              <stop offset="0"   stop-color="#f7f5ff"/>
+              <stop offset=".3"  stop-color="#9aa2de"/>
+              <stop offset=".62" stop-color="#232458"/>
+              <stop offset=".85" stop-color="#aeb4e8"/>
+              <stop offset="1"   stop-color="#1c1c45"/>
             </linearGradient>
             <radialGradient id="rxGlass" cx="50%" cy="44%" r="64%">
-              <stop offset="0"   stop-color="#f0feff"/>
-              <stop offset=".28" stop-color="#93f2ff"/>
-              <stop offset=".64" stop-color="#3fcbe8"/>
-              <stop offset="1"   stop-color="#0d6f98"/>
+              <stop offset="0"   stop-color="#f3efff"/>
+              <stop offset=".28" stop-color="#b9a6ff"/>
+              <stop offset=".64" stop-color="#6a63e8"/>
+              <stop offset="1"   stop-color="#1b2278"/>
             </radialGradient>
             <linearGradient id="rxCoreGrad" x1=".5" y1="0" x2=".5" y2="1">
               <stop offset="0"   stop-color="#ffffff"/>
-              <stop offset=".3"  stop-color="#c6fcff"/>
-              <stop offset=".72" stop-color="#63e2f7"/>
-              <stop offset="1"   stop-color="#eefdff"/>
+              <stop offset=".3"  stop-color="#dcd2ff"/>
+              <stop offset=".72" stop-color="#8f7bff"/>
+              <stop offset="1"   stop-color="#f0ecff"/>
             </linearGradient>
             <linearGradient id="rxSweepGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0"   stop-color="#ffffff" stop-opacity="0"/>
-              <stop offset=".5"  stop-color="#dcfbff" stop-opacity=".5"/>
+              <stop offset=".5"  stop-color="#e6ddff" stop-opacity=".5"/>
               <stop offset="1"   stop-color="#ffffff" stop-opacity="0"/>
             </linearGradient>
 
@@ -472,7 +533,7 @@
 
             <!-- one half of the nested chevron strut set; mirrored for the right side -->
             <g id="rxStrutsL" fill="none" stroke-linecap="round">
-              <g stroke="#17304d" stroke-width="13">
+              <g stroke="#1e1c4f" stroke-width="13">
                 <path d="M93 160 L169 334"/>
                 <path d="M69 171 L145 345"/>
                 <path d="M46 232 L150 232"/>
@@ -487,29 +548,29 @@
             <!-- hexagonal shoulder plate -->
             <g id="rxShoulder">
               <path d="M60 16 L114 16 L130 40 L114 64 L60 64 L44 40 Z"
-                    fill="url(#rxSteel)" stroke="#132437" stroke-width="2.5"/>
+                    fill="url(#rxSteel)" stroke="#191833" stroke-width="2.5"/>
               <path d="M71 27 L103 27 L113 40 L103 53 L71 53 L61 40 Z"
-                    fill="url(#rxSteel2)" stroke="#132437" stroke-width="1.6"/>
-              <path d="M62 20 L110 20" stroke="#dcecff" stroke-opacity=".6" stroke-width="2.5" stroke-linecap="round"/>
+                    fill="url(#rxSteel2)" stroke="#191833" stroke-width="1.6"/>
+              <path d="M62 20 L110 20" stroke="#e2ddff" stroke-opacity=".6" stroke-width="2.5" stroke-linecap="round"/>
             </g>
 
             <!-- side mounting lug -->
             <g id="rxLug">
               <path d="M26 158 L10 165 Q-1 177 10 189 L26 196 Z"
-                    fill="url(#rxSteel2)" stroke="#132437" stroke-width="2"/>
+                    fill="url(#rxSteel2)" stroke="#191833" stroke-width="2"/>
               <ellipse cx="12" cy="177" rx="4.2" ry="7.5" fill="#0a1626"/>
             </g>
 
             <!-- SHARK CORNER: armored block with chevron + gill vents, laid along the lower edge -->
             <g id="rxGill" transform="translate(14 190) rotate(56.5)">
               <path d="M4 -36 L152 -36 L152 -2 L4 -2 Z"
-                    fill="url(#rxSteel)" stroke="#132437" stroke-width="2.5"/>
-              <path d="M4 -33 L152 -33" stroke="#e2f0ff" stroke-opacity=".45" stroke-width="2.4"/>
-              <path d="M18 -9 L34 -29 L50 -9" fill="none" stroke="#0f1f33"
+                    fill="url(#rxSteel)" stroke="#191833" stroke-width="2.5"/>
+              <path d="M4 -33 L152 -33" stroke="#e8e3ff" stroke-opacity=".45" stroke-width="2.4"/>
+              <path d="M18 -9 L34 -29 L50 -9" fill="none" stroke="#161536"
                     stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-              <path d="M18 -13 L34 -33 L50 -13" fill="none" stroke="#7fa8cb" stroke-opacity=".5"
+              <path d="M18 -13 L34 -33 L50 -13" fill="none" stroke="#8f8ad0" stroke-opacity=".5"
                     stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-              <g fill="#0f1f33">
+              <g fill="#161536">
                 <rect x="64"  y="-29" width="9" height="23" rx="3.5"/>
                 <rect x="80"  y="-29" width="9" height="23" rx="3.5"/>
                 <rect x="96"  y="-29" width="9" height="23" rx="3.5"/>
@@ -520,13 +581,13 @@
           </defs>
 
           <!-- housing -->
-          <use href="#rxBody" fill="url(#rxSteel)" stroke="#101d2e" stroke-width="3"/>
+          <use href="#rxBody" fill="url(#rxSteel)" stroke="#12112b" stroke-width="3"/>
           <use href="#rxBody" fill="url(#rxSteel2)"
                transform="translate(200 216) scale(.945) translate(-200 -216)"/>
-          <use href="#rxBody" fill="none" stroke="#e6f2ff" stroke-opacity=".35" stroke-width="1.4"
+          <use href="#rxBody" fill="none" stroke="#eae6ff" stroke-opacity=".35" stroke-width="1.4"
                transform="translate(200 216) scale(.915) translate(-200 -216)"/>
           <!-- glass well -->
-          <use href="#rxBody" fill="#07182a"
+          <use href="#rxBody" fill="#0a0824"
                transform="translate(200 216) scale(.88) translate(-200 -216)"/>
 
           <!-- luminous interior -->
@@ -537,11 +598,11 @@
 
           <g clip-path="url(#rxGlassClip)">
             <!-- upper spine strut with centre notch -->
-            <g stroke="#17304d" stroke-width="14" stroke-linecap="round">
+            <g stroke="#1e1c4f" stroke-width="14" stroke-linecap="round">
               <path d="M74 116 L184 116"/>
               <path d="M216 116 L326 116"/>
             </g>
-            <path d="M186 100 L214 100 L214 126 L186 126 Z" fill="#17304d"/>
+            <path d="M186 100 L214 100 L214 126 L186 126 Z" fill="#1e1c4f"/>
             <path d="M191 105 L209 105" stroke="#6f9cc2" stroke-width="2" stroke-linecap="round"/>
 
             <!-- nested chevrons, both sides -->
@@ -551,7 +612,7 @@
             <!-- triangular core -->
             <g class="rx-core">
               <path d="M120 148 L280 148 L200 334 Z" fill="url(#rxCoreGrad)"/>
-              <path d="M120 148 L280 148 L200 334 Z" fill="none" stroke="#17304d"
+              <path d="M120 148 L280 148 L200 334 Z" fill="none" stroke="#1e1c4f"
                     stroke-width="11" stroke-linejoin="round"/>
               <path d="M120 148 L280 148 L200 334 Z" fill="none" stroke="#ffffff" stroke-opacity=".9"
                     stroke-width="2.2" stroke-linejoin="round"/>
@@ -559,7 +620,7 @@
                     stroke-width="1.4" stroke-linejoin="round"/>
             </g>
             <!-- core stem down to the bottom tab -->
-            <path d="M192 320 L208 320 L208 362 L192 362 Z" fill="#17304d"/>
+            <path d="M192 320 L208 320 L208 362 L192 362 Z" fill="#1e1c4f"/>
 
             <!-- scan sweep -->
             <g class="rx-sweep">
@@ -568,7 +629,7 @@
           </g>
 
           <!-- glass rim -->
-          <use href="#rxBody" fill="none" stroke="#bcd9f2" stroke-opacity=".55" stroke-width="2"
+          <use href="#rxBody" fill="none" stroke="#c9c2f5" stroke-opacity=".55" stroke-width="2"
                transform="translate(200 216) scale(.88) translate(-200 -216)"/>
 
           <!-- bolted-on armor -->
@@ -578,23 +639,23 @@
           <use href="#rxLug" transform="translate(400 0) scale(-1 1)"/>
 
           <!-- strut arms linking the centre module to the shoulder plates -->
-          <path d="M126 30 L156 44 L156 64 L126 52 Z" fill="url(#rxSteel2)" stroke="#132437" stroke-width="2"/>
-          <path d="M274 30 L244 44 L244 64 L274 52 Z" fill="url(#rxSteel2)" stroke="#132437" stroke-width="2"/>
+          <path d="M126 30 L156 44 L156 64 L126 52 Z" fill="url(#rxSteel2)" stroke="#191833" stroke-width="2"/>
+          <path d="M274 30 L244 44 L244 64 L274 52 Z" fill="url(#rxSteel2)" stroke="#191833" stroke-width="2"/>
           <use href="#rxShoulder"/>
           <use href="#rxShoulder" transform="translate(400 0) scale(-1 1)"/>
 
           <!-- centre hex module -->
           <path d="M158 10 L242 10 L264 52 L242 94 L158 94 L136 52 Z"
-                fill="url(#rxSteel)" stroke="#101d2e" stroke-width="3"/>
+                fill="url(#rxSteel)" stroke="#12112b" stroke-width="3"/>
           <path d="M170 24 L230 24 L246 52 L230 80 L170 80 L154 52 Z"
-                fill="url(#rxSteel2)" stroke="#132437" stroke-width="2"/>
+                fill="url(#rxSteel2)" stroke="#191833" stroke-width="2"/>
           <path d="M182 37 L218 37 L228 52 L218 67 L182 67 L172 52 Z"
-                fill="url(#rxSteel)" stroke="#dcecff" stroke-opacity=".55" stroke-width="1.6"/>
-          <path d="M160 15 L240 15" stroke="#e8f4ff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>
+                fill="url(#rxSteel)" stroke="#e2ddff" stroke-opacity=".55" stroke-width="1.6"/>
+          <path d="M160 15 L240 15" stroke="#ede9ff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>
 
           <!-- bottom tab -->
           <path d="M180 372 L220 372 L213 393 L187 393 Z"
-                fill="url(#rxSteel2)" stroke="#132437" stroke-width="2.4"/>
+                fill="url(#rxSteel2)" stroke="#191833" stroke-width="2.4"/>
 
           <!-- specular sheen across the housing -->
           <path d="M56 60 L344 60" stroke="#ffffff" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>
@@ -602,7 +663,7 @@
                 stroke-width="2.5" stroke-linecap="round"/>
         </svg>
 
-        <div class="orb-status" id="orbStatusLabel">Idle</div>
+        <div class="orb-status" id="orbStatusLabel">Standby</div>
       </div>
 
       <div class="input-bar">
@@ -675,11 +736,11 @@
   }
 
   const orbStatusLabel = document.getElementById('orbStatusLabel');
-  const STATE_LABELS = { listening: 'Listening…', thinking: 'Thinking…', speaking: 'Speaking…' };
+  const STATE_LABELS = { listening: 'Listening', thinking: 'Processing', speaking: 'Responding' };
   function setOrbState(state) {
     orbWrap.classList.remove('listening', 'thinking', 'speaking');
     if (state) orbWrap.classList.add(state);
-    if (orbStatusLabel) orbStatusLabel.textContent = STATE_LABELS[state] || 'Idle';
+    if (orbStatusLabel) orbStatusLabel.textContent = STATE_LABELS[state] || 'Standby';
   }
 
   function bubbleTextOf(content) {
@@ -1138,28 +1199,36 @@
 </script>
 
 <script>
-  /* ============== AMBIENT BACKGROUND: drifting particle field ==============
-     Canvas 2D, not WebGL — no three.js, no GPU driver surprises, and it costs
-     a fraction of a frame. Same intent as before: a sense of open space behind
-     the reactor, kept dim and slow so chat text stays readable. */
+  /* ============== AMBIENT BACKGROUND: aurora ==============
+     AURA's namesake, done as its own thing: slow blue/violet light ribbons
+     drifting behind the reactor, with a fine dust layer over them for depth.
+     Canvas 2D, no WebGL — cheap enough to leave running, dim enough that chat
+     text stays readable. */
   (function () {
     const canvas = document.getElementById('bgCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
-    const COUNT = 110;
-    let w = 0, h = 0, dots = [];
+    let w = 0, h = 0;
 
-    function seed() {
-      dots = [];
-      for (let i = 0; i < COUNT; i++) {
-        const depth = 0.35 + Math.random() * 0.65;   // parallax layer
-        dots.push({
+    // each ribbon: a wide sine band with its own hue, speed and phase
+    const RIBBONS = [
+      { hue: 232, sat: 82, amp: 0.10, y: 0.34, speed: 0.000075, phase: 0.0, width: 0.20, alpha: 0.10 },
+      { hue: 262, sat: 78, amp: 0.13, y: 0.52, speed: 0.000052, phase: 2.1, width: 0.26, alpha: 0.095 },
+      { hue: 248, sat: 70, amp: 0.08, y: 0.70, speed: 0.000091, phase: 4.3, width: 0.18, alpha: 0.07 }
+    ];
+
+    const DUST = 90;
+    let dust = [];
+    function seedDust() {
+      dust = [];
+      for (let i = 0; i < DUST; i++) {
+        const depth = 0.35 + Math.random() * 0.65;
+        dust.push({
           x: Math.random(), y: Math.random(),
-          r: (0.6 + Math.random() * 1.5) * depth,
-          depth,
-          vx: (Math.random() - 0.5) * 0.00006,
-          vy: -0.00004 - Math.random() * 0.00008,
+          r: (0.5 + Math.random() * 1.4) * depth, depth,
+          vx: (Math.random() - 0.5) * 0.00005,
+          vy: -0.00003 - Math.random() * 0.00007,
           tw: Math.random() * Math.PI * 2
         });
       }
@@ -1175,9 +1244,33 @@
 
     let tiltX = 0, tiltY = 0, curX = 0, curY = 0;
     window.addEventListener('mousemove', (e) => {
-      tiltX = ((e.clientX / window.innerWidth) * 2 - 1) * 16;
-      tiltY = ((e.clientY / window.innerHeight) * 2 - 1) * 9;
+      tiltX = ((e.clientX / window.innerWidth) * 2 - 1) * 14;
+      tiltY = ((e.clientY / window.innerHeight) * 2 - 1) * 8;
     });
+
+    function curveY(r, k, t) {
+      return r.y * h
+        + Math.sin(k * 3.1 + t * r.speed * 1000 + r.phase) * h * r.amp
+        + Math.sin(k * 7.3 - t * r.speed * 620 + r.phase) * h * r.amp * 0.32
+        + curY * 0.6;
+    }
+
+    function drawRibbon(r, t) {
+      const band = h * r.width;
+      const step = Math.max(16, w / 40);
+      ctx.beginPath();
+      for (let x = -60; x <= w + 60; x += step) {
+        const y = curveY(r, x / Math.max(w, 1), t);
+        if (x === -60) ctx.moveTo(x + curX * 0.5, y); else ctx.lineTo(x + curX * 0.5, y);
+      }
+      for (let x = w + 60; x >= -60; x -= step) {
+        const y = curveY(r, x / Math.max(w, 1), t) + band;
+        ctx.lineTo(x + curX * 0.5, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = 'hsla(' + r.hue + ',' + r.sat + '%,62%,' + r.alpha + ')';
+      ctx.fill();
+    }
 
     function frame(t) {
       requestAnimationFrame(frame);
@@ -1185,23 +1278,40 @@
       curX += (tiltX - curX) * 0.03;
       curY += (tiltY - curY) * 0.03;
       ctx.clearRect(0, 0, w, h);
-      for (const d of dots) {
+
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.filter = 'blur(46px)';          // turns the bands into actual light
+      for (const r of RIBBONS) drawRibbon(r, t);
+      ctx.filter = 'none';
+      ctx.globalCompositeOperation = 'source-over';
+
+      for (const d of dust) {
         d.x += d.vx; d.y += d.vy;
         if (d.y < -0.05) { d.y = 1.05; d.x = Math.random(); }
         if (d.x < -0.05) d.x = 1.05; else if (d.x > 1.05) d.x = -0.05;
         const px = d.x * w + curX * d.depth;
         const py = d.y * h + curY * d.depth;
-        const alpha = (0.18 + 0.30 * d.depth) * (0.6 + 0.4 * Math.sin(t * 0.0008 + d.tw));
+        const a = (0.14 + 0.26 * d.depth) * (0.6 + 0.4 * Math.sin(t * 0.0008 + d.tw));
         ctx.beginPath();
         ctx.arc(px, py, d.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(79, 211, 245, ' + alpha.toFixed(3) + ')';
+        ctx.fillStyle = 'rgba(178, 160, 255, ' + a.toFixed(3) + ')';
         ctx.fill();
       }
     }
 
-    resize(); seed();
+    resize(); seedDust();
     window.addEventListener('resize', resize);
     requestAnimationFrame(frame);
+  })();
+
+  /* ============== BOOT SEQUENCE ============== */
+  (function () {
+    const boot = document.getElementById('boot');
+    if (!boot) return;
+    setTimeout(() => {
+      boot.classList.add('done');
+      setTimeout(() => boot.remove(), 800);
+    }, 3000);
   })();
 </script>
 </body>

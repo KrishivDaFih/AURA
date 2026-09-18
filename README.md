@@ -22,6 +22,34 @@ Multi-provider HUD assistant: Anthropic, OpenAI, or Groq. Wake word, global
 hotkey, computer control, file attachments, custom connectors, and
 persistent chat history.
 
+## AURA's own identity (not a repainted Kairos)
+
+**Palette.** The cyan/navy HUD is gone. Surfaces are deep indigo-blue
+(`#05060f` base, `#141a44` wash); the accent is violet `#9a7cff`, with a
+secondary blue `#5f83ff` carrying structure and data. The reactor's plasma bed
+runs violet at the core out to deep blue at the rim, so both colours are load-
+bearing rather than one tinting the other. Warning states moved from orange to
+rose, which sits correctly against violet.
+
+**Aurora, not a starfield.** The old background was a flat dot field. AURA's is
+its namesake: three light ribbons in blue and violet, each with its own hue,
+amplitude, drift speed and phase, riding two summed sine waves so they never
+loop visibly. They're drawn as bands between two curves and then blurred on the
+canvas, which is what makes them read as light rather than as shapes — an
+un-blurred band has a hard edge and looks like a stripe. A fine dust layer
+drifts over the top with cursor parallax. Still Canvas 2D, still no WebGL.
+
+**Boot sequence.** Launching AURA spins the core up before handing you the HUD:
+the mark fades in under its own glow, four status lines report in, and a
+progress bar fills — about three seconds, then it dissolves into the interface.
+
+**Voice.** The wordmark carries its expansion (Adaptive Unified Response
+Assistant) in tracked mono. Status vocabulary is AURA's own — Standby,
+Listening, Processing, Responding — matching the web interface rather than the
+generic "Thinking…". The system prompt gives it a defined character: calm and
+quietly confident, dry rather than chirpy, acts first and reports the result
+instead of narrating intentions.
+
 ## 1. Run from source
 
 ```
