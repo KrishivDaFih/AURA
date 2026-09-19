@@ -22,6 +22,22 @@ Multi-provider HUD assistant: Anthropic, OpenAI, or Groq. Wake word, global
 hotkey, computer control, file attachments, custom connectors, and
 persistent chat history.
 
+## v1.8.1 — hologram clipping fix
+
+The band was being cut off on all four sides. Cause: with `BAND = 0.52` the
+ribbon's outer edge sat at radius 1.52, and the perspective divide
+(`CAM / (CAM - z)`) multiplied that by up to 1.18 — so the surface drew to about
+120% of the canvas. Narrowing the band to 0.30 and easing the scale to 0.315
+puts the maximum projected extent at roughly 90% of the box, with the
+containment ring pulled in to match.
+
+Two artefacts went with it. Adjacent quads were drawn with a slight overlap
+under additive blending, so every overlap composited twice and read as a bright
+radial stripe — the surface now uses normal compositing, where depth sorting
+alone decides what sits in front. And the per-quad seam stroke, added to hide
+antialiasing gaps, turned into visible hatching wherever foreshortening squeezed
+the quads together; it's gone, with the segment count reduced instead.
+
 ## v1.8.0 — the hologram core
 
 The arc reactor is gone. In its place is the inverted-Mobius band Tony spins up
@@ -162,7 +178,7 @@ npm start
 
 ## 2. Or run the installer
 
-`AURA-Setup-1.8.0.exe` is a real Windows installer (NSIS) — it walks you
+`AURA-Setup-1.8.1.exe` is a real Windows installer (NSIS) — it walks you
 through an install wizard, lets you pick the install folder, and adds a
 **Start Menu entry, a Desktop shortcut, and an uninstaller** listed in
 "Add or Remove Programs". Unsigned, so SmartScreen will still warn once:
