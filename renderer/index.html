@@ -5,6 +5,7 @@
 <title>AURA</title>
 <style>
   :root{
+    color-scheme: dark;
     --bg: #05060f;
     --accent: #9a7cff;          /* violet — AURA's voice */
     --accent-2: #5f83ff;        /* deep blue — data & structure */
@@ -15,7 +16,7 @@
     --danger: #ff6f91;
     --line: rgba(130, 104, 255, 0.17);
     --line-strong: rgba(130, 104, 255, 0.34);
-    --panel: rgba(18, 18, 48, 0.5);
+    --panel: rgba(16, 16, 44, 0.78);
     --faint: #585d8f;
     --mono: 'Consolas', 'SF Mono', ui-monospace, monospace;
   }
@@ -61,6 +62,20 @@
   }
   @keyframes bootFill { to { width: 100%; } }
 
+
+  /* ---------- SCROLLBARS (global — no native Windows bar anywhere) ---------- */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(154,124,255,0.26);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(154,124,255,0.46); background-clip: content-box; }
+  ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+  ::-webkit-scrollbar-corner { background: transparent; }
+
   /* ---------- SHELL ---------- */
   #bgCanvas { position: fixed; inset: 0; z-index: 0; }
   .vignette {
@@ -77,9 +92,8 @@
   .topbar {
     grid-column: 1 / -1;
     display: flex; align-items: center; gap: 16px; padding: 0 16px;
-    background: linear-gradient(90deg, rgba(20,26,68,0.52), rgba(43,20,88,0.34));
+    background: linear-gradient(90deg, rgba(20,26,68,0.82), rgba(43,20,88,0.66));
     border: 1px solid var(--line); border-radius: 14px;
-    backdrop-filter: blur(10px);
   }
   .brand { display: flex; align-items: center; gap: 11px; }
   .brand-mark { width: 30px; height: 30px; flex-shrink: 0; filter: drop-shadow(0 0 7px var(--accent-glow)); }
@@ -123,7 +137,7 @@
   .rail { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow-y: auto; padding-right: 2px; }
   .panel {
     position: relative; background: var(--panel); border: 1px solid var(--line);
-    border-radius: 14px; padding: 14px 15px; backdrop-filter: blur(10px);
+    border-radius: 14px; padding: 14px 15px;
   }
   .panel::before, .panel::after {
     content: ''; position: absolute; width: 9px; height: 9px; pointer-events: none;
@@ -170,9 +184,9 @@
   /* ---------- MAIN PANEL ---------- */
   .main {
     position: relative; min-height: 0; display: flex; flex-direction: column;
-    background: linear-gradient(170deg, rgba(20,26,68,0.26), rgba(43,20,88,0.18));
+    background: linear-gradient(170deg, rgba(18,22,60,0.55), rgba(34,18,72,0.45));
     border: 1px solid var(--line); border-radius: 22px;
-    backdrop-filter: blur(8px); overflow: hidden;
+    overflow: hidden;
   }
   .scanline {
     position: absolute; inset: 0; pointer-events: none; opacity: 0.3; z-index: 1;
@@ -254,6 +268,17 @@
   .stage.chat-mode .hero-tagline .tagline-docked { display: block; }
   .tagline-docked b { color: #a98bff; font-weight: 500; letter-spacing: 2.4px; }
 
+  .setup-hint {
+    display: none; align-items: center; gap: 8px; cursor: pointer;
+    margin-top: 12px; padding: 8px 14px; border-radius: 999px;
+    border: 1px solid var(--line-strong); background: rgba(154,124,255,0.08);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase;
+    color: #a98bff; transition: background 0.18s, border-color 0.18s;
+  }
+  .setup-hint.visible { display: inline-flex; }
+  .setup-hint:hover { background: rgba(154,124,255,0.18); border-color: rgba(169,139,255,0.6); }
+  .stage.chat-mode .setup-hint { display: none !important; }
+
   /* ---------- CHAT MESSAGES ---------- */
   .messages {
     position: relative; z-index: 2; flex: 1; min-height: 0; overflow-y: auto;
@@ -261,8 +286,6 @@
     opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
   }
   .stage.chat-mode ~ .messages { opacity: 1; pointer-events: auto; padding: 20px 26px 4px; }
-  .messages::-webkit-scrollbar { width: 7px; }
-  .messages::-webkit-scrollbar-thumb { background: rgba(154,124,255,0.24); border-radius: 4px; }
 
   .bubble { max-width: 82%; padding: 11px 15px; border-radius: 14px; font-size: 13.5px; line-height: 1.55;
     white-space: pre-wrap; word-wrap: break-word; }
@@ -328,12 +351,13 @@
 
   /* ---------- HISTORY PANEL ---------- */
   .history-panel {
-    position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
-    background: rgba(6, 12, 18, 0.82); border-right: 1px solid rgba(154, 124, 255, 0.25);
+    position: fixed; top: 0; left: 0; width: 300px; height: 100%;
+    transform: translateX(-320px); will-change: transform;
+    background: #090820; border-right: 1px solid rgba(154, 124, 255, 0.25);
     box-shadow: 8px 0 30px rgba(0,0,0,0.4);
-    backdrop-filter: blur(12px); transition: left 0.3s ease; display: flex; flex-direction: column; z-index: 25;
+    transition: transform 0.32s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; z-index: 25;
   }
-  .history-panel.open { left: 0; }
+  .history-panel.open { transform: translateX(0); }
   .history-header { padding: 16px 18px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(154, 124, 255,0.18); }
   .history-header span { font-size: 12px; letter-spacing: 2px; color: var(--accent); }
   .history-header .close-history { cursor: pointer; color: var(--text-dim); font-size: 16px; }
@@ -353,26 +377,32 @@
   .history-item .del:hover { color: var(--danger); }
 
   /* ---------- SETTINGS MODAL ---------- */
-  .settings-overlay { position: fixed; inset: 0; background: rgba(3, 6, 9, 0.78); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 30; perspective: 900px; }
+  .settings-overlay { position: fixed; inset: 0; background: rgba(4, 4, 14, 0.86); display: none; align-items: center; justify-content: center; z-index: 30; }
   .settings-overlay.open { display: flex; }
   .settings-overlay.open .settings-modal { animation: modalIn 0.32s cubic-bezier(.2,.8,.3,1) both; }
   @keyframes modalIn {
-    from { opacity: 0; transform: rotateX(-10deg) translateY(18px) scale(0.95); }
-    to { opacity: 1; transform: rotateX(0) translateY(0) scale(1); }
+    from { opacity: 0; transform: translate3d(0, 14px, 0); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); }
   }
-  .settings-modal { width: min(480px, 90%); max-height: 84vh; overflow-y: auto; background: rgba(10, 20, 28, 0.82); backdrop-filter: blur(14px); border: 1px solid rgba(154, 124, 255, 0.4); border-radius: 10px; box-shadow: 0 0 50px rgba(154, 124, 255, 0.18), 0 20px 60px rgba(0,0,0,0.5); padding: 22px 24px 18px; }
-  .settings-modal::-webkit-scrollbar { width: 5px; }
-  .settings-modal::-webkit-scrollbar-thumb { background: rgba(154, 124, 255,0.3); border-radius: 3px; }
+  .settings-modal { will-change: transform, opacity; width: min(480px, 90%); max-height: 84vh; overflow-y: auto; background: #0d0c26; border: 1px solid rgba(154, 124, 255, 0.4); border-radius: 10px; box-shadow: 0 0 50px rgba(154, 124, 255, 0.18), 0 20px 60px rgba(0,0,0,0.5); padding: 22px 24px 18px; }
   .settings-title { font-size: 13px; letter-spacing: 3px; color: var(--accent); margin-bottom: 16px; }
   .settings-section { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid rgba(154, 124, 255,0.12); }
   .settings-section:last-of-type { border-bottom: none; }
   .settings-section-title { font-size: 11px; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; opacity: 0.85; }
   .settings-label { display: block; font-size: 11px; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 6px; }
   .settings-input, .settings-select, .settings-textarea {
-    width: 100%; background: rgba(154, 124, 255, 0.06); border: 1px solid rgba(154, 124, 255, 0.3);
-    border-radius: 3px; color: #efe9ff; font-size: 13px; padding: 9px 10px; margin-bottom: 12px;
+    width: 100%; background: rgba(154, 124, 255, 0.07); border: 1px solid rgba(154, 124, 255, 0.3);
+    border-radius: 6px; color: #efe9ff; font-size: 13px; padding: 9px 10px; margin-bottom: 12px;
     outline: none; font-family: inherit;
+    -webkit-appearance: none; appearance: none;
   }
+  .settings-select {
+    padding-right: 30px;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239a7cff' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 11px center; background-size: 10px;
+  }
+  .settings-select option { background: #0d0c26; color: #efe9ff; }
+  .settings-input::placeholder, .settings-textarea::placeholder { color: var(--faint); }
   .settings-textarea { resize: vertical; min-height: 50px; font-family: monospace; font-size: 12px; }
   .settings-input:focus, .settings-select:focus, .settings-textarea:focus { border-color: var(--accent); }
   .settings-hint { font-size: 11px; color: var(--text-dim); line-height: 1.5; margin: -6px 0 12px; }
@@ -380,12 +410,26 @@
   .provider-fields { display: none; }
   .provider-fields.active { display: block; }
   .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .checkbox-row input { accent-color: var(--accent); width: 15px; height: 15px; }
+  .checkbox-row input[type="checkbox"] {
+    -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; flex-shrink: 0; position: relative; cursor: pointer;
+    border-radius: 4px; border: 1px solid rgba(154,124,255,0.45);
+    background: rgba(154,124,255,0.07); margin: 0;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .checkbox-row input[type="checkbox"]:hover { border-color: var(--accent); }
+  .checkbox-row input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, var(--accent-2), var(--accent)); border-color: transparent;
+  }
+  .checkbox-row input[type="checkbox"]:checked::after {
+    content: ''; position: absolute; left: 5px; top: 1.5px;
+    width: 4px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
   .checkbox-row label { font-size: 12.5px; color: #e2e0fa; }
   .warning-box { background: rgba(255, 111, 145, 0.08); border: 1px solid rgba(255, 111, 145, 0.32); border-radius: 4px; padding: 9px 11px; font-size: 11.5px; color: #ffcfc0; line-height: 1.5; margin-bottom: 12px; }
   .settings-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
-  .settings-btn { background: var(--accent); color: #04141a; border: none; border-radius: 3px; padding: 8px 16px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; }
-  .settings-btn.ghost { background: transparent; color: var(--text-dim); border: 1px solid rgba(154, 124, 255,0.25); }
+  .settings-btn { background: linear-gradient(135deg, var(--accent-2), var(--accent)); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; }
+  .settings-btn.ghost { background: transparent; color: var(--text-dim); border: 1px solid rgba(154, 124, 255,0.25); border-radius: 6px; }
   .settings-btn.small { padding: 6px 12px; font-size: 11.5px; }
   .settings-status { margin-top: 10px; font-size: 11.5px; color: var(--accent); min-height: 14px; }
   .connector-item { border: 1px solid rgba(154, 124, 255,0.2); border-radius: 5px; padding: 8px 10px; margin-bottom: 8px; font-size: 12px; }
@@ -401,7 +445,7 @@
     .clock-date, .status-item span { display: none; }
     .brand-name { font-size: 15px; letter-spacing: 3px; }
     .bubble { max-width: 84%; }
-    .history-panel { width: 84%; left: -100%; }
+    .history-panel { width: 84%; }
   }
 </style>
 </head>
@@ -790,6 +834,8 @@
         <span class="tagline-full">Ask <span id="taglineWakeWord">AURA</span> anything — type below, click the mic, attach a file, or say the wake word.</span>
         <span class="tagline-docked"><b>AURA</b><br><span id="dockedSession">SESSION</span></span>
       </div>
+
+      <div class="setup-hint" id="setupHint">Add a provider key in Settings</div>
     </div>
 
     <div class="messages" id="messages"></div>
@@ -1246,13 +1292,23 @@
     settingsStatus.textContent = 'Saved.';
     syncListeningMode(patch.alwaysListening, patch.wakeWord || 'aura');
     setTimeout(() => settingsOverlay.classList.remove('open'), 500);
+    window.aura.getSettings().then(updateSetupHint).catch(() => {});
   });
+
+  const setupHint = document.getElementById('setupHint');
+  function updateSetupHint(s) {
+    if (!setupHint) return;
+    const missing = !(s && s.hasKey && s.hasKey[s.provider]);
+    setupHint.classList.toggle('visible', missing);
+  }
+  if (setupHint) setupHint.addEventListener('click', () => openSettings());
 
   (async () => {
     const s = await window.aura.getSettings();
     controlIndicatorLabel.textContent = 'PC Control: ' + (s.controlEnabled ? 'On' : 'Off');
     applyWakeWordUI(s.wakeWord || 'aura');
-    if (!s.hasKey[s.provider]) openSettings();
+    // Don't hijack the UI on launch — just flag it and let the user decide.
+    updateSetupHint(s);
     syncListeningMode(s.alwaysListening, s.wakeWord || 'aura');
   })();
 
@@ -1327,10 +1383,16 @@
 
 <script>
   /* ============== AMBIENT BACKGROUND: aurora ==============
-     AURA's namesake, done as its own thing: slow blue/violet light ribbons
-     drifting behind the reactor, with a fine dust layer over them for depth.
-     Canvas 2D, no WebGL — cheap enough to leave running, dim enough that chat
-     text stays readable. */
+     AURA's namesake: slow blue/violet light ribbons drifting behind the app,
+     with a fine dust layer over them.
+
+     The ribbons are rendered onto a TINY offscreen canvas (~220px wide) and
+     then scaled up onto the visible one. The upscale interpolation *is* the
+     blur — which means no per-frame filter work. The previous version called
+     ctx.filter = 'blur(46px)' on a full-window canvas every frame; that is
+     tens of milliseconds of CPU per frame, and it was what made the whole UI
+     stutter and the colours strobe. This costs a fraction of a millisecond
+     and is smooth by construction. */
   (function () {
     const canvas = document.getElementById('bgCanvas');
     if (!canvas) return;
@@ -1338,11 +1400,16 @@
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
     let w = 0, h = 0;
 
-    // each ribbon: a wide sine band with its own hue, speed and phase
+    // low-res buffer the ribbons are painted into
+    const buf = document.createElement('canvas');
+    const bctx = buf.getContext('2d');
+    const BUF_W = 220;
+    let bufH = 120;
+
     const RIBBONS = [
-      { hue: 232, sat: 82, amp: 0.10, y: 0.34, speed: 0.000075, phase: 0.0, width: 0.20, alpha: 0.10 },
-      { hue: 262, sat: 78, amp: 0.13, y: 0.52, speed: 0.000052, phase: 2.1, width: 0.26, alpha: 0.095 },
-      { hue: 248, sat: 70, amp: 0.08, y: 0.70, speed: 0.000091, phase: 4.3, width: 0.18, alpha: 0.07 }
+      { hue: 232, sat: 82, amp: 0.10, y: 0.34, speed: 0.000075, phase: 0.0, width: 0.30, alpha: 0.19 },
+      { hue: 262, sat: 78, amp: 0.13, y: 0.52, speed: 0.000052, phase: 2.1, width: 0.36, alpha: 0.18 },
+      { hue: 248, sat: 70, amp: 0.08, y: 0.70, speed: 0.000091, phase: 4.3, width: 0.26, alpha: 0.13 }
     ];
 
     const DUST = 90;
@@ -1367,6 +1434,11 @@
       canvas.width = w * DPR; canvas.height = h * DPR;
       canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      bufH = Math.max(40, Math.round(BUF_W * (h / w)));
+      buf.width = BUF_W; buf.height = bufH;
     }
 
     let tiltX = 0, tiltY = 0, curX = 0, curY = 0;
@@ -1375,28 +1447,25 @@
       tiltY = ((e.clientY / window.innerHeight) * 2 - 1) * 8;
     });
 
-    function curveY(r, k, t) {
-      return r.y * h
-        + Math.sin(k * 3.1 + t * r.speed * 1000 + r.phase) * h * r.amp
-        + Math.sin(k * 7.3 - t * r.speed * 620 + r.phase) * h * r.amp * 0.32
-        + curY * 0.6;
-    }
-
     function drawRibbon(r, t) {
-      const band = h * r.width;
-      const step = Math.max(16, w / 40);
-      ctx.beginPath();
-      for (let x = -60; x <= w + 60; x += step) {
-        const y = curveY(r, x / Math.max(w, 1), t);
-        if (x === -60) ctx.moveTo(x + curX * 0.5, y); else ctx.lineTo(x + curX * 0.5, y);
+      const band = bufH * r.width;
+      const step = BUF_W / 26;
+      const yAt = (k) => bufH * r.y
+        + Math.sin(k * 3.1 + t * r.speed * 1000 + r.phase) * bufH * r.amp
+        + Math.sin(k * 7.3 - t * r.speed * 620 + r.phase) * bufH * r.amp * 0.32
+        + (curY / h) * bufH * 0.6;
+
+      bctx.beginPath();
+      for (let x = -step; x <= BUF_W + step; x += step) {
+        const y = yAt(x / BUF_W);
+        if (x <= -step) bctx.moveTo(x, y); else bctx.lineTo(x, y);
       }
-      for (let x = w + 60; x >= -60; x -= step) {
-        const y = curveY(r, x / Math.max(w, 1), t) + band;
-        ctx.lineTo(x + curX * 0.5, y);
+      for (let x = BUF_W + step; x >= -step; x -= step) {
+        bctx.lineTo(x, yAt(x / BUF_W) + band);
       }
-      ctx.closePath();
-      ctx.fillStyle = 'hsla(' + r.hue + ',' + r.sat + '%,62%,' + r.alpha + ')';
-      ctx.fill();
+      bctx.closePath();
+      bctx.fillStyle = 'hsla(' + r.hue + ',' + r.sat + '%,62%,' + r.alpha + ')';
+      bctx.fill();
     }
 
     function frame(t) {
@@ -1404,13 +1473,16 @@
       if (!w || !h) return;
       curX += (tiltX - curX) * 0.03;
       curY += (tiltY - curY) * 0.03;
-      ctx.clearRect(0, 0, w, h);
 
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.filter = 'blur(46px)';          // turns the bands into actual light
+      // ribbons -> tiny buffer
+      bctx.clearRect(0, 0, BUF_W, bufH);
+      bctx.globalCompositeOperation = 'lighter';
       for (const r of RIBBONS) drawRibbon(r, t);
-      ctx.filter = 'none';
-      ctx.globalCompositeOperation = 'source-over';
+      bctx.globalCompositeOperation = 'source-over';
+
+      // buffer -> screen; the upscale does the blurring for free
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(buf, curX * 0.5 - 8, -8, w + 16, h + 16);
 
       for (const d of dust) {
         d.x += d.vx; d.y += d.vy;

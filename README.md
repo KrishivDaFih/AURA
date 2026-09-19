@@ -22,6 +22,38 @@ Multi-provider HUD assistant: Anthropic, OpenAI, or Groq. Wake word, global
 hotkey, computer control, file attachments, custom connectors, and
 persistent chat history.
 
+## Fixes in this build
+
+**Scrollbars.** The global stylesheet set `scrollbar-width` / `scrollbar-color` on
+`*`. Chromium treats the standard scrollbar properties and the
+`::-webkit-scrollbar-*` pseudo-elements as mutually exclusive — setting the
+former on an element makes it ignore the latter. So the one rule meant to make
+scrollbars thin was silently disabling every styled scrollbar in the app and
+handing back the native white Windows bar. The standard properties are gone and
+the webkit rules now apply everywhere. `color-scheme: dark` is also declared, so
+any scrollbar or control the UA draws itself comes out dark instead of light.
+
+**The menu strobing.** Six separate layers (top bar, rail panels, main panel,
+conversation drawer, settings overlay, settings modal) each used
+`backdrop-filter`, stacked over a canvas that repaints continuously. Every frame
+forced all six to re-sample their backdrop, and the slide animation on top of
+that is what made the colours flash instead of moving smoothly. Since the aurora
+beneath is already soft, the blur was pure cost for no visual gain — all six are
+now plain translucent or solid fills. The drawer also animates `transform`
+rather than `left`, so it composites on the GPU instead of relaunching layout
+every frame.
+
+**Settings opening on launch.** Nothing opens it at startup now. If no provider
+key is set, a dismissible hint appears above the composer instead; Settings only
+opens when you click it, the hint, or when a send actually fails on a missing
+key.
+
+**Form controls.** Without `color-scheme: dark`, Chromium drew selects,
+checkboxes and inputs in the OS light theme regardless of the CSS. Selects now
+have a custom violet chevron, checkboxes are drawn from scratch rather than
+inheriting the platform widget, and the primary button uses the blue-to-violet
+gradient.
+
 ## The interface (rebuilt on the web AURA layout)
 
 The old floating-HUD layout is gone — no more absolutely-positioned orb drifting
