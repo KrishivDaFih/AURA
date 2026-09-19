@@ -1,7 +1,7 @@
 {
   "name": "aura-desktop",
-  "version": "1.7.0",
-  "description": "AURA \u2014 multi-provider HUD assistant with an arc-reactor core, wake word, hotkey, PC control, file uploads, connectors, and persistent chat history",
+  "version": "1.8.0",
+  "description": "AURA \u2014 multi-provider assistant with a holographic Mobius core, wake word, hotkey, PC control, file uploads, connectors, and persistent chat history",
   "main": "main.js",
   "author": "Kris",
   "license": "MIT",

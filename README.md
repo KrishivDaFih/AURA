@@ -22,6 +22,34 @@ Multi-provider HUD assistant: Anthropic, OpenAI, or Groq. Wake word, global
 hotkey, computer control, file attachments, custom connectors, and
 persistent chat history.
 
+## v1.8.0 — the hologram core
+
+The arc reactor is gone. In its place is the inverted-Mobius band Tony spins up
+in the lab in Endgame, kept in AURA's blue and violet rather than MCU blue-white.
+
+Worth being straight about one thing: FRIDAY has no on-screen orb in Endgame —
+she's voice-only, with no avatar in any scene. This is the lab hologram, which
+is what that request usually means.
+
+**It's a real surface, not a drawing.** Points are generated from the Mobius
+parametric equations, rotated in 3D, projected through a perspective divide,
+and the ribbon quads are sorted back-to-front every frame — so the band actually
+passes behind itself where it twists, instead of faking the overlap. Cross ribs
+and a slow containment ring give it the wireframe read of a lab hologram, and
+the edges get two stroke passes (wide and faint for bloom, tight and bright on
+top) so it glows like projected light.
+
+Canvas 2D, as with everything else here — no WebGL, nothing to fail on a driver.
+Capped at ~30fps and it resizes with a ResizeObserver, so it stays sharp when the
+core docks to the corner.
+
+Rotation speed and brightness track the assistant's state: slow drift on
+standby, faster while listening, a hard fast spin while processing.
+
+The app icon, installer artwork, top-bar brand mark and boot screen are all
+generated from the *same* equations, so every mark in the app is literally the
+same object viewed at one fixed angle.
+
 ## v1.7.0
 
 - Frosted glass restored on the top bar, the Core / Directives / Protocol panels
@@ -134,7 +162,7 @@ npm start
 
 ## 2. Or run the installer
 
-`AURA-Setup-1.7.0.exe` is a real Windows installer (NSIS) — it walks you
+`AURA-Setup-1.8.0.exe` is a real Windows installer (NSIS) — it walks you
 through an install wizard, lets you pick the install folder, and adds a
 **Start Menu entry, a Desktop shortcut, and an uninstaller** listed in
 "Add or Remove Programs". Unsigned, so SmartScreen will still warn once:

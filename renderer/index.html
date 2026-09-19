@@ -218,44 +218,27 @@
   }
   .stage.chat-mode .orb-wrap { width: 72px; height: 72px; }
 
-  .reactor {
+  .holo {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-    width: 88%; height: 88%;
-    filter: drop-shadow(0 0 26px var(--accent-glow)) drop-shadow(0 18px 30px rgba(0,0,0,0.55));
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 18px var(--accent-glow));
+    transition: filter 0.4s ease;
   }
-  .stage.chat-mode .orb-wrap .reactor { width: 100%; height: 100%; filter: drop-shadow(0 0 9px var(--accent-glow)); }
   .reactor-glow {
-    position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
-    width: 86%; height: 86%; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 45%, rgba(154,124,255,0.42), rgba(95,131,255,0.14) 50%, transparent 72%);
-    animation: rxBreathe 5s ease-in-out infinite;
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 82%; height: 82%; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, rgba(154,124,255,0.34), rgba(95,131,255,0.12) 52%, transparent 72%);
+    animation: rxBreathe 6s ease-in-out infinite;
   }
   @keyframes rxBreathe {
-    0%,100% { opacity: .62; transform: translate(-50%,-50%) scale(1); }
-    50%     { opacity: 1;   transform: translate(-50%,-50%) scale(1.08); }
+    0%,100% { opacity: .58; transform: translate(-50%,-50%) scale(1); }
+    50%     { opacity: .95; transform: translate(-50%,-50%) scale(1.06); }
   }
-
-  .rx-glass { animation: rxGlow 4.6s ease-in-out infinite; }
-  @keyframes rxGlow { 0%,100% { opacity: .80; } 50% { opacity: 1; } }
-  .rx-core  { animation: rxCore 4.6s ease-in-out infinite; }
-  @keyframes rxCore { 0%,100% { opacity: .84; } 50% { opacity: 1; } }
-  .rx-sweep { animation: rxSweep 6s cubic-bezier(.5,0,.5,1) infinite; }
-  @keyframes rxSweep {
-    0%   { transform: translateY(-150px); opacity: 0; }
-    14%  { opacity: 1; } 86% { opacity: 1; }
-    100% { transform: translateY(210px);  opacity: 0; }
-  }
-  .orb-wrap.listening .rx-glass, .orb-wrap.listening .rx-core { animation-duration: 2.4s; }
-  .orb-wrap.listening .rx-sweep { animation-duration: 3.2s; }
-  .orb-wrap.listening .reactor-glow { animation-duration: 2.4s; }
-  .orb-wrap.thinking .rx-glass, .orb-wrap.thinking .rx-core { animation-duration: 1s; }
-  .orb-wrap.thinking .rx-sweep { animation-duration: 1.3s; }
-  .orb-wrap.thinking .reactor-glow { animation-duration: 1.2s; }
-  .orb-wrap.speaking .rx-glass, .orb-wrap.speaking .rx-core { animation-duration: 1.8s; }
-  .orb-wrap.speaking .rx-sweep { animation-duration: 2.4s; }
-  .orb-wrap.speaking .reactor-glow { animation-duration: 1.8s; }
-  .orb-wrap.speaking .reactor, .orb-wrap.thinking .reactor {
-    filter: drop-shadow(0 0 34px var(--accent-glow)) drop-shadow(0 18px 30px rgba(0,0,0,0.55));
+  .orb-wrap.listening .reactor-glow { animation-duration: 3s; }
+  .orb-wrap.thinking  .reactor-glow { animation-duration: 1.4s; }
+  .orb-wrap.speaking  .reactor-glow { animation-duration: 2.2s; }
+  .orb-wrap.thinking .holo, .orb-wrap.speaking .holo {
+    filter: drop-shadow(0 0 30px var(--accent-glow));
   }
   .orb-status { display: none; }
 
@@ -457,13 +440,22 @@
 </head>
 <body>
 <div id="boot">
-  <svg class="boot-mark" viewBox="0 0 400 400" aria-hidden="true">
-    <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
-          fill="#241f5c" stroke="#9a7cff" stroke-width="16"/>
-    <path d="M120 148 L280 148 L200 334 Z" fill="#9a7cff"/>
+  <svg class="boot-mark" viewBox="0 0 64 64" aria-hidden="true">
+    <defs>
+            <linearGradient id="holoGlyphBoot" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#7fa0ff"/>
+              <stop offset="1" stop-color="#b79dff"/>
+            </linearGradient>
+          </defs>
+          <g fill="none" stroke="url(#holoGlyphBoot)" stroke-linejoin="round">
+            <path d="M37.10 35.38 L36.90 35.90 L36.69 36.41 L36.45 36.92 L36.20 37.42 L35.94 37.91 L35.66 38.39 L35.36 38.86 L35.04 39.33 L34.70 39.78 L34.35 40.22 L33.97 40.65 L33.57 41.06 L33.15 41.46 L32.71 41.83 L32.25 42.19 L31.76 42.53 L31.24 42.84 L30.70 43.12 L30.14 43.38 L29.55 43.60 L28.93 43.78 L28.28 43.92 L27.61 44.02 L26.91 44.08 L26.19 44.08 L25.44 44.03 L24.68 43.92 L23.89 43.75 L23.09 43.52 L22.27 43.22 L21.44 42.85 L20.61 42.42 L19.78 41.91 L18.95 41.32 L18.14 40.67 L17.34 39.94 L16.57 39.14 L15.83 38.28 L15.13 37.36 L14.47 36.37 L13.87 35.34 L13.33 34.27 L12.85 33.16 L12.44 32.02 L12.11 30.87 L11.87 29.71 L11.70 28.55 L11.62 27.40 L11.63 26.28 L11.73 25.19 L11.91 24.14 L12.18 23.14 L12.53 22.20 L12.96 21.32 L13.47 20.51 L14.04 19.78 L14.68 19.12 L15.38 18.55 L16.12 18.06 L16.92 17.65 L17.76 17.33 L18.63 17.09 L19.54 16.93 L20.47 16.85 L21.42 16.85 L22.38 16.93 L23.35 17.08 L24.34 17.30 L25.32 17.59 L26.30 17.94 L27.28 18.36 L28.26 18.83 L29.22 19.36 L30.18 19.94 L31.12 20.56 L32.04 21.24 L32.96 21.96 L33.85 22.72 L34.72 23.51 L35.58 24.35 L36.41 25.22 L37.22 26.12 L38.01 27.05 L38.77 28.01 L39.51 29.00 L40.23 30.01 L40.92 31.05 L41.58 32.10 L42.22 33.18 L42.82 34.28 L43.40 35.39 L43.94 36.51 L44.46 37.65 L44.93 38.80 L45.38 39.96 L45.79 41.12 Z" stroke-width="7" opacity=".22"/>
+            <path d="M45.79 41.12 L46.16 42.28 L46.49 43.45 L46.77 44.61 L47.01 45.76 L47.21 46.90 L47.36 48.03 L47.45 49.13 L47.49 50.20 L47.47 51.24 L47.39 52.23 L47.25 53.17 L47.04 54.06 L46.76 54.87 L46.41 55.61 L45.98 56.25 L45.48 56.79 L44.91 57.22 L44.25 57.52 L43.52 57.68 L42.71 57.69 L41.84 57.53 L40.89 57.21 L39.89 56.71 L38.83 56.02 L37.72 55.15 L36.59 54.09 L35.43 52.84 L34.27 51.42 L33.11 49.83 L31.98 48.09 L30.89 46.23 L29.85 44.25 L28.87 42.19 L27.97 40.08 L27.17 37.94 L26.45 35.79 L25.85 33.67 L25.35 31.59 L24.95 29.59 L24.67 27.68 L24.48 25.87 L24.40 24.18 L24.41 22.63 L24.51 21.21 L24.69 19.92 L24.94 18.78 L25.25 17.78 L25.61 16.92 L26.03 16.19 L26.48 15.59 L26.96 15.10 L27.46 14.74 L27.99 14.47 L28.52 14.31 L29.07 14.24 L29.61 14.25 L30.16 14.34 L30.70 14.50 L31.23 14.73 L31.75 15.01 L32.26 15.34 L32.76 15.72 L33.24 16.13 L33.70 16.59 L34.13 17.08 L34.55 17.59 L34.95 18.13 L35.33 18.69 L35.68 19.27 L36.01 19.86 L36.32 20.46 L36.60 21.07 L36.87 21.69 L37.10 22.32 L37.32 22.95 L37.51 23.58 L37.68 24.21 L37.82 24.85 L37.95 25.48 L38.05 26.10 L38.13 26.73 L38.19 27.35 L38.23 27.96 L38.25 28.57 L38.25 29.18 L38.23 29.77 L38.20 30.36 L38.14 30.95 L38.07 31.53 L37.98 32.10 L37.87 32.66 L37.75 33.22 L37.61 33.77 L37.46 34.31 L37.29 34.85 L37.10 35.38 Z" stroke-width="7" opacity=".22"/>
+            <path d="M37.10 35.38 L36.90 35.90 L36.69 36.41 L36.45 36.92 L36.20 37.42 L35.94 37.91 L35.66 38.39 L35.36 38.86 L35.04 39.33 L34.70 39.78 L34.35 40.22 L33.97 40.65 L33.57 41.06 L33.15 41.46 L32.71 41.83 L32.25 42.19 L31.76 42.53 L31.24 42.84 L30.70 43.12 L30.14 43.38 L29.55 43.60 L28.93 43.78 L28.28 43.92 L27.61 44.02 L26.91 44.08 L26.19 44.08 L25.44 44.03 L24.68 43.92 L23.89 43.75 L23.09 43.52 L22.27 43.22 L21.44 42.85 L20.61 42.42 L19.78 41.91 L18.95 41.32 L18.14 40.67 L17.34 39.94 L16.57 39.14 L15.83 38.28 L15.13 37.36 L14.47 36.37 L13.87 35.34 L13.33 34.27 L12.85 33.16 L12.44 32.02 L12.11 30.87 L11.87 29.71 L11.70 28.55 L11.62 27.40 L11.63 26.28 L11.73 25.19 L11.91 24.14 L12.18 23.14 L12.53 22.20 L12.96 21.32 L13.47 20.51 L14.04 19.78 L14.68 19.12 L15.38 18.55 L16.12 18.06 L16.92 17.65 L17.76 17.33 L18.63 17.09 L19.54 16.93 L20.47 16.85 L21.42 16.85 L22.38 16.93 L23.35 17.08 L24.34 17.30 L25.32 17.59 L26.30 17.94 L27.28 18.36 L28.26 18.83 L29.22 19.36 L30.18 19.94 L31.12 20.56 L32.04 21.24 L32.96 21.96 L33.85 22.72 L34.72 23.51 L35.58 24.35 L36.41 25.22 L37.22 26.12 L38.01 27.05 L38.77 28.01 L39.51 29.00 L40.23 30.01 L40.92 31.05 L41.58 32.10 L42.22 33.18 L42.82 34.28 L43.40 35.39 L43.94 36.51 L44.46 37.65 L44.93 38.80 L45.38 39.96 L45.79 41.12 Z" stroke-width="2.6"/>
+            <path d="M45.79 41.12 L46.16 42.28 L46.49 43.45 L46.77 44.61 L47.01 45.76 L47.21 46.90 L47.36 48.03 L47.45 49.13 L47.49 50.20 L47.47 51.24 L47.39 52.23 L47.25 53.17 L47.04 54.06 L46.76 54.87 L46.41 55.61 L45.98 56.25 L45.48 56.79 L44.91 57.22 L44.25 57.52 L43.52 57.68 L42.71 57.69 L41.84 57.53 L40.89 57.21 L39.89 56.71 L38.83 56.02 L37.72 55.15 L36.59 54.09 L35.43 52.84 L34.27 51.42 L33.11 49.83 L31.98 48.09 L30.89 46.23 L29.85 44.25 L28.87 42.19 L27.97 40.08 L27.17 37.94 L26.45 35.79 L25.85 33.67 L25.35 31.59 L24.95 29.59 L24.67 27.68 L24.48 25.87 L24.40 24.18 L24.41 22.63 L24.51 21.21 L24.69 19.92 L24.94 18.78 L25.25 17.78 L25.61 16.92 L26.03 16.19 L26.48 15.59 L26.96 15.10 L27.46 14.74 L27.99 14.47 L28.52 14.31 L29.07 14.24 L29.61 14.25 L30.16 14.34 L30.70 14.50 L31.23 14.73 L31.75 15.01 L32.26 15.34 L32.76 15.72 L33.24 16.13 L33.70 16.59 L34.13 17.08 L34.55 17.59 L34.95 18.13 L35.33 18.69 L35.68 19.27 L36.01 19.86 L36.32 20.46 L36.60 21.07 L36.87 21.69 L37.10 22.32 L37.32 22.95 L37.51 23.58 L37.68 24.21 L37.82 24.85 L37.95 25.48 L38.05 26.10 L38.13 26.73 L38.19 27.35 L38.23 27.96 L38.25 28.57 L38.25 29.18 L38.23 29.77 L38.20 30.36 L38.14 30.95 L38.07 31.53 L37.98 32.10 L37.87 32.66 L37.75 33.22 L37.61 33.77 L37.46 34.31 L37.29 34.85 L37.10 35.38 Z" stroke-width="2.6"/>
+          </g>
   </svg>
   <div class="boot-lines">
-    <div>REACTOR CORE &nbsp;<b>SPUN UP</b></div>
+    <div>HOLOGRAPHIC CORE &nbsp;<b>SPUN UP</b></div>
     <div>NEURAL LINK &nbsp;<b>ESTABLISHED</b></div>
     <div>VOICE INTERFACE &nbsp;<b>ARMED</b></div>
     <div><b>AURA ONLINE</b></div>
@@ -586,12 +578,20 @@
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </div>
     <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 400 400" aria-hidden="true">
-        <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"
-              fill="#241f5c" stroke="#9a7cff" stroke-width="18"/>
-        <path d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z" fill="#181545"/>
-        <path d="M120 148 L280 148 L200 334 Z" fill="#9a7cff"/>
-      </svg>
+      <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="holoGlyph" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#7fa0ff"/>
+              <stop offset="1" stop-color="#b79dff"/>
+            </linearGradient>
+          </defs>
+          <g fill="none" stroke="url(#holoGlyph)" stroke-linejoin="round">
+            <path d="M37.10 35.38 L36.90 35.90 L36.69 36.41 L36.45 36.92 L36.20 37.42 L35.94 37.91 L35.66 38.39 L35.36 38.86 L35.04 39.33 L34.70 39.78 L34.35 40.22 L33.97 40.65 L33.57 41.06 L33.15 41.46 L32.71 41.83 L32.25 42.19 L31.76 42.53 L31.24 42.84 L30.70 43.12 L30.14 43.38 L29.55 43.60 L28.93 43.78 L28.28 43.92 L27.61 44.02 L26.91 44.08 L26.19 44.08 L25.44 44.03 L24.68 43.92 L23.89 43.75 L23.09 43.52 L22.27 43.22 L21.44 42.85 L20.61 42.42 L19.78 41.91 L18.95 41.32 L18.14 40.67 L17.34 39.94 L16.57 39.14 L15.83 38.28 L15.13 37.36 L14.47 36.37 L13.87 35.34 L13.33 34.27 L12.85 33.16 L12.44 32.02 L12.11 30.87 L11.87 29.71 L11.70 28.55 L11.62 27.40 L11.63 26.28 L11.73 25.19 L11.91 24.14 L12.18 23.14 L12.53 22.20 L12.96 21.32 L13.47 20.51 L14.04 19.78 L14.68 19.12 L15.38 18.55 L16.12 18.06 L16.92 17.65 L17.76 17.33 L18.63 17.09 L19.54 16.93 L20.47 16.85 L21.42 16.85 L22.38 16.93 L23.35 17.08 L24.34 17.30 L25.32 17.59 L26.30 17.94 L27.28 18.36 L28.26 18.83 L29.22 19.36 L30.18 19.94 L31.12 20.56 L32.04 21.24 L32.96 21.96 L33.85 22.72 L34.72 23.51 L35.58 24.35 L36.41 25.22 L37.22 26.12 L38.01 27.05 L38.77 28.01 L39.51 29.00 L40.23 30.01 L40.92 31.05 L41.58 32.10 L42.22 33.18 L42.82 34.28 L43.40 35.39 L43.94 36.51 L44.46 37.65 L44.93 38.80 L45.38 39.96 L45.79 41.12 Z" stroke-width="7" opacity=".22"/>
+            <path d="M45.79 41.12 L46.16 42.28 L46.49 43.45 L46.77 44.61 L47.01 45.76 L47.21 46.90 L47.36 48.03 L47.45 49.13 L47.49 50.20 L47.47 51.24 L47.39 52.23 L47.25 53.17 L47.04 54.06 L46.76 54.87 L46.41 55.61 L45.98 56.25 L45.48 56.79 L44.91 57.22 L44.25 57.52 L43.52 57.68 L42.71 57.69 L41.84 57.53 L40.89 57.21 L39.89 56.71 L38.83 56.02 L37.72 55.15 L36.59 54.09 L35.43 52.84 L34.27 51.42 L33.11 49.83 L31.98 48.09 L30.89 46.23 L29.85 44.25 L28.87 42.19 L27.97 40.08 L27.17 37.94 L26.45 35.79 L25.85 33.67 L25.35 31.59 L24.95 29.59 L24.67 27.68 L24.48 25.87 L24.40 24.18 L24.41 22.63 L24.51 21.21 L24.69 19.92 L24.94 18.78 L25.25 17.78 L25.61 16.92 L26.03 16.19 L26.48 15.59 L26.96 15.10 L27.46 14.74 L27.99 14.47 L28.52 14.31 L29.07 14.24 L29.61 14.25 L30.16 14.34 L30.70 14.50 L31.23 14.73 L31.75 15.01 L32.26 15.34 L32.76 15.72 L33.24 16.13 L33.70 16.59 L34.13 17.08 L34.55 17.59 L34.95 18.13 L35.33 18.69 L35.68 19.27 L36.01 19.86 L36.32 20.46 L36.60 21.07 L36.87 21.69 L37.10 22.32 L37.32 22.95 L37.51 23.58 L37.68 24.21 L37.82 24.85 L37.95 25.48 L38.05 26.10 L38.13 26.73 L38.19 27.35 L38.23 27.96 L38.25 28.57 L38.25 29.18 L38.23 29.77 L38.20 30.36 L38.14 30.95 L38.07 31.53 L37.98 32.10 L37.87 32.66 L37.75 33.22 L37.61 33.77 L37.46 34.31 L37.29 34.85 L37.10 35.38 Z" stroke-width="7" opacity=".22"/>
+            <path d="M37.10 35.38 L36.90 35.90 L36.69 36.41 L36.45 36.92 L36.20 37.42 L35.94 37.91 L35.66 38.39 L35.36 38.86 L35.04 39.33 L34.70 39.78 L34.35 40.22 L33.97 40.65 L33.57 41.06 L33.15 41.46 L32.71 41.83 L32.25 42.19 L31.76 42.53 L31.24 42.84 L30.70 43.12 L30.14 43.38 L29.55 43.60 L28.93 43.78 L28.28 43.92 L27.61 44.02 L26.91 44.08 L26.19 44.08 L25.44 44.03 L24.68 43.92 L23.89 43.75 L23.09 43.52 L22.27 43.22 L21.44 42.85 L20.61 42.42 L19.78 41.91 L18.95 41.32 L18.14 40.67 L17.34 39.94 L16.57 39.14 L15.83 38.28 L15.13 37.36 L14.47 36.37 L13.87 35.34 L13.33 34.27 L12.85 33.16 L12.44 32.02 L12.11 30.87 L11.87 29.71 L11.70 28.55 L11.62 27.40 L11.63 26.28 L11.73 25.19 L11.91 24.14 L12.18 23.14 L12.53 22.20 L12.96 21.32 L13.47 20.51 L14.04 19.78 L14.68 19.12 L15.38 18.55 L16.12 18.06 L16.92 17.65 L17.76 17.33 L18.63 17.09 L19.54 16.93 L20.47 16.85 L21.42 16.85 L22.38 16.93 L23.35 17.08 L24.34 17.30 L25.32 17.59 L26.30 17.94 L27.28 18.36 L28.26 18.83 L29.22 19.36 L30.18 19.94 L31.12 20.56 L32.04 21.24 L32.96 21.96 L33.85 22.72 L34.72 23.51 L35.58 24.35 L36.41 25.22 L37.22 26.12 L38.01 27.05 L38.77 28.01 L39.51 29.00 L40.23 30.01 L40.92 31.05 L41.58 32.10 L42.22 33.18 L42.82 34.28 L43.40 35.39 L43.94 36.51 L44.46 37.65 L44.93 38.80 L45.38 39.96 L45.79 41.12 Z" stroke-width="2.6"/>
+            <path d="M45.79 41.12 L46.16 42.28 L46.49 43.45 L46.77 44.61 L47.01 45.76 L47.21 46.90 L47.36 48.03 L47.45 49.13 L47.49 50.20 L47.47 51.24 L47.39 52.23 L47.25 53.17 L47.04 54.06 L46.76 54.87 L46.41 55.61 L45.98 56.25 L45.48 56.79 L44.91 57.22 L44.25 57.52 L43.52 57.68 L42.71 57.69 L41.84 57.53 L40.89 57.21 L39.89 56.71 L38.83 56.02 L37.72 55.15 L36.59 54.09 L35.43 52.84 L34.27 51.42 L33.11 49.83 L31.98 48.09 L30.89 46.23 L29.85 44.25 L28.87 42.19 L27.97 40.08 L27.17 37.94 L26.45 35.79 L25.85 33.67 L25.35 31.59 L24.95 29.59 L24.67 27.68 L24.48 25.87 L24.40 24.18 L24.41 22.63 L24.51 21.21 L24.69 19.92 L24.94 18.78 L25.25 17.78 L25.61 16.92 L26.03 16.19 L26.48 15.59 L26.96 15.10 L27.46 14.74 L27.99 14.47 L28.52 14.31 L29.07 14.24 L29.61 14.25 L30.16 14.34 L30.70 14.50 L31.23 14.73 L31.75 15.01 L32.26 15.34 L32.76 15.72 L33.24 16.13 L33.70 16.59 L34.13 17.08 L34.55 17.59 L34.95 18.13 L35.33 18.69 L35.68 19.27 L36.01 19.86 L36.32 20.46 L36.60 21.07 L36.87 21.69 L37.10 22.32 L37.32 22.95 L37.51 23.58 L37.68 24.21 L37.82 24.85 L37.95 25.48 L38.05 26.10 L38.13 26.73 L38.19 27.35 L38.23 27.96 L38.25 28.57 L38.25 29.18 L38.23 29.77 L38.20 30.36 L38.14 30.95 L38.07 31.53 L37.98 32.10 L37.87 32.66 L37.75 33.22 L37.61 33.77 L37.46 34.31 L37.29 34.85 L37.10 35.38 Z" stroke-width="2.6"/>
+          </g>
+        </svg>
       <div class="brand-text">
         <div class="brand-name">AURA</div>
         <div class="brand-sub">ADAPTIVE UNIFIED RESPONSE ASSISTANT</div>
@@ -660,180 +660,7 @@
     <div class="stage" id="stage">
       <div class="orb-wrap" id="orbWrap">
         <div class="reactor-glow"></div>
-        <!-- ARC REACTOR: armored shield housing, gill corners, triangular core -->
-        <svg class="reactor" id="reactor" viewBox="0 0 400 400" aria-hidden="true">
-          <defs>
-            <!-- master silhouette; every concentric ring is this path re-scaled -->
-            <path id="rxBody" d="M52 54 L348 54 L386 190 L300 320 L226 378 L174 378 L100 320 L14 190 Z"/>
-
-            <linearGradient id="rxSteel" x1=".1" y1="0" x2=".55" y2="1">
-              <stop offset="0"   stop-color="#eeeeff"/>
-              <stop offset=".14" stop-color="#a6b0e4"/>
-              <stop offset=".34" stop-color="#3b3d82"/>
-              <stop offset=".52" stop-color="#c4c8f2"/>
-              <stop offset=".72" stop-color="#2b2d66"/>
-              <stop offset="1"   stop-color="#151534"/>
-            </linearGradient>
-            <linearGradient id="rxSteel2" x1=".85" y1="0" x2=".15" y2="1">
-              <stop offset="0"   stop-color="#f7f5ff"/>
-              <stop offset=".3"  stop-color="#9aa2de"/>
-              <stop offset=".62" stop-color="#232458"/>
-              <stop offset=".85" stop-color="#aeb4e8"/>
-              <stop offset="1"   stop-color="#1c1c45"/>
-            </linearGradient>
-            <radialGradient id="rxGlass" cx="50%" cy="44%" r="64%">
-              <stop offset="0"   stop-color="#f3efff"/>
-              <stop offset=".28" stop-color="#b9a6ff"/>
-              <stop offset=".64" stop-color="#6a63e8"/>
-              <stop offset="1"   stop-color="#1b2278"/>
-            </radialGradient>
-            <linearGradient id="rxCoreGrad" x1=".5" y1="0" x2=".5" y2="1">
-              <stop offset="0"   stop-color="#ffffff"/>
-              <stop offset=".3"  stop-color="#dcd2ff"/>
-              <stop offset=".72" stop-color="#8f7bff"/>
-              <stop offset="1"   stop-color="#f0ecff"/>
-            </linearGradient>
-            <linearGradient id="rxSweepGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0"   stop-color="#ffffff" stop-opacity="0"/>
-              <stop offset=".5"  stop-color="#e6ddff" stop-opacity=".5"/>
-              <stop offset="1"   stop-color="#ffffff" stop-opacity="0"/>
-            </linearGradient>
-
-            <clipPath id="rxGlassClip">
-              <use href="#rxBody" transform="translate(200 216) scale(.88) translate(-200 -216)"/>
-            </clipPath>
-
-            <!-- one half of the nested chevron strut set; mirrored for the right side -->
-            <g id="rxStrutsL" fill="none" stroke-linecap="round">
-              <g stroke="#1e1c4f" stroke-width="13">
-                <path d="M93 160 L169 334"/>
-                <path d="M69 171 L145 345"/>
-                <path d="M46 232 L150 232"/>
-              </g>
-              <g stroke="#5f8cb4" stroke-width="2" opacity=".85">
-                <path d="M87 158 L163 332"/>
-                <path d="M63 169 L139 343"/>
-                <path d="M46 226 L150 226"/>
-              </g>
-            </g>
-
-            <!-- hexagonal shoulder plate -->
-            <g id="rxShoulder">
-              <path d="M60 16 L114 16 L130 40 L114 64 L60 64 L44 40 Z"
-                    fill="url(#rxSteel)" stroke="#191833" stroke-width="2.5"/>
-              <path d="M71 27 L103 27 L113 40 L103 53 L71 53 L61 40 Z"
-                    fill="url(#rxSteel2)" stroke="#191833" stroke-width="1.6"/>
-              <path d="M62 20 L110 20" stroke="#e2ddff" stroke-opacity=".6" stroke-width="2.5" stroke-linecap="round"/>
-            </g>
-
-            <!-- side mounting lug -->
-            <g id="rxLug">
-              <path d="M26 158 L10 165 Q-1 177 10 189 L26 196 Z"
-                    fill="url(#rxSteel2)" stroke="#191833" stroke-width="2"/>
-              <ellipse cx="12" cy="177" rx="4.2" ry="7.5" fill="#0a1626"/>
-            </g>
-
-            <!-- SHARK CORNER: armored block with chevron + gill vents, laid along the lower edge -->
-            <g id="rxGill" transform="translate(14 190) rotate(56.5)">
-              <path d="M4 -36 L152 -36 L152 -2 L4 -2 Z"
-                    fill="url(#rxSteel)" stroke="#191833" stroke-width="2.5"/>
-              <path d="M4 -33 L152 -33" stroke="#e8e3ff" stroke-opacity=".45" stroke-width="2.4"/>
-              <path d="M18 -9 L34 -29 L50 -9" fill="none" stroke="#161536"
-                    stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-              <path d="M18 -13 L34 -33 L50 -13" fill="none" stroke="#8f8ad0" stroke-opacity=".5"
-                    stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-              <g fill="#161536">
-                <rect x="64"  y="-29" width="9" height="23" rx="3.5"/>
-                <rect x="80"  y="-29" width="9" height="23" rx="3.5"/>
-                <rect x="96"  y="-29" width="9" height="23" rx="3.5"/>
-                <rect x="112" y="-29" width="9" height="23" rx="3.5"/>
-                <rect x="128" y="-29" width="9" height="23" rx="3.5"/>
-              </g>
-            </g>
-          </defs>
-
-          <!-- housing -->
-          <use href="#rxBody" fill="url(#rxSteel)" stroke="#12112b" stroke-width="3"/>
-          <use href="#rxBody" fill="url(#rxSteel2)"
-               transform="translate(200 216) scale(.945) translate(-200 -216)"/>
-          <use href="#rxBody" fill="none" stroke="#eae6ff" stroke-opacity=".35" stroke-width="1.4"
-               transform="translate(200 216) scale(.915) translate(-200 -216)"/>
-          <!-- glass well -->
-          <use href="#rxBody" fill="#0a0824"
-               transform="translate(200 216) scale(.88) translate(-200 -216)"/>
-
-          <!-- luminous interior -->
-          <g class="rx-glass">
-            <use href="#rxBody" fill="url(#rxGlass)"
-                 transform="translate(200 216) scale(.88) translate(-200 -216)"/>
-          </g>
-
-          <g clip-path="url(#rxGlassClip)">
-            <!-- upper spine strut with centre notch -->
-            <g stroke="#1e1c4f" stroke-width="14" stroke-linecap="round">
-              <path d="M74 116 L184 116"/>
-              <path d="M216 116 L326 116"/>
-            </g>
-            <path d="M186 100 L214 100 L214 126 L186 126 Z" fill="#1e1c4f"/>
-            <path d="M191 105 L209 105" stroke="#6f9cc2" stroke-width="2" stroke-linecap="round"/>
-
-            <!-- nested chevrons, both sides -->
-            <use href="#rxStrutsL"/>
-            <use href="#rxStrutsL" transform="translate(400 0) scale(-1 1)"/>
-
-            <!-- triangular core -->
-            <g class="rx-core">
-              <path d="M120 148 L280 148 L200 334 Z" fill="url(#rxCoreGrad)"/>
-              <path d="M120 148 L280 148 L200 334 Z" fill="none" stroke="#1e1c4f"
-                    stroke-width="11" stroke-linejoin="round"/>
-              <path d="M120 148 L280 148 L200 334 Z" fill="none" stroke="#ffffff" stroke-opacity=".9"
-                    stroke-width="2.2" stroke-linejoin="round"/>
-              <path d="M138 160 L262 160 L200 305 Z" fill="none" stroke="#ffffff" stroke-opacity=".28"
-                    stroke-width="1.4" stroke-linejoin="round"/>
-            </g>
-            <!-- core stem down to the bottom tab -->
-            <path d="M192 320 L208 320 L208 362 L192 362 Z" fill="#1e1c4f"/>
-
-            <!-- scan sweep -->
-            <g class="rx-sweep">
-              <rect x="10" y="150" width="380" height="60" fill="url(#rxSweepGrad)"/>
-            </g>
-          </g>
-
-          <!-- glass rim -->
-          <use href="#rxBody" fill="none" stroke="#c9c2f5" stroke-opacity=".55" stroke-width="2"
-               transform="translate(200 216) scale(.88) translate(-200 -216)"/>
-
-          <!-- bolted-on armor -->
-          <use href="#rxGill"/>
-          <use href="#rxGill" transform="translate(400 0) scale(-1 1)"/>
-          <use href="#rxLug"/>
-          <use href="#rxLug" transform="translate(400 0) scale(-1 1)"/>
-
-          <!-- strut arms linking the centre module to the shoulder plates -->
-          <path d="M126 30 L156 44 L156 64 L126 52 Z" fill="url(#rxSteel2)" stroke="#191833" stroke-width="2"/>
-          <path d="M274 30 L244 44 L244 64 L274 52 Z" fill="url(#rxSteel2)" stroke="#191833" stroke-width="2"/>
-          <use href="#rxShoulder"/>
-          <use href="#rxShoulder" transform="translate(400 0) scale(-1 1)"/>
-
-          <!-- centre hex module -->
-          <path d="M158 10 L242 10 L264 52 L242 94 L158 94 L136 52 Z"
-                fill="url(#rxSteel)" stroke="#12112b" stroke-width="3"/>
-          <path d="M170 24 L230 24 L246 52 L230 80 L170 80 L154 52 Z"
-                fill="url(#rxSteel2)" stroke="#191833" stroke-width="2"/>
-          <path d="M182 37 L218 37 L228 52 L218 67 L182 67 L172 52 Z"
-                fill="url(#rxSteel)" stroke="#e2ddff" stroke-opacity=".55" stroke-width="1.6"/>
-          <path d="M160 15 L240 15" stroke="#ede9ff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>
-
-          <!-- bottom tab -->
-          <path d="M180 372 L220 372 L213 393 L187 393 Z"
-                fill="url(#rxSteel2)" stroke="#191833" stroke-width="2.4"/>
-
-          <!-- specular sheen across the housing -->
-          <path d="M56 60 L344 60" stroke="#ffffff" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>
-          <path d="M20 190 L60 62" fill="none" stroke="#ffffff" stroke-opacity=".3"
-                stroke-width="2.5" stroke-linecap="round"/>
-        </svg>
+        <canvas class="holo" id="holoCanvas" aria-hidden="true"></canvas>
       </div>
 
       <div class="hero-tagline" id="heroTagline">
@@ -1589,6 +1416,160 @@
 
     const railNew = $('railNewChat');
     if (railNew) railNew.addEventListener('click', () => $('newChatBtn').click());
+  })();
+</script>
+
+<script>
+  /* ============== FRIDAY HOLOGRAM ==============
+     The inverted-Mobius band Tony spins up in the lab. It's a real parametric
+     surface, not a flat graphic: points are generated in 3D, rotated, projected,
+     then the quads are sorted back-to-front so the band genuinely passes behind
+     itself where it twists. Canvas 2D — no WebGL, consistent with the rest of
+     the app. */
+  (function () {
+    const wrap = document.getElementById('orbWrap');
+    const cv = document.getElementById('holoCanvas');
+    if (!wrap || !cv) return;
+    const ctx = cv.getContext('2d');
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    let W = 0, H = 0;
+    function resize() {
+      const r = wrap.getBoundingClientRect();
+      W = Math.max(1, r.width); H = Math.max(1, r.height);
+      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+      cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
+    window.addEventListener('resize', resize);
+    resize();
+
+    const SEG = 88;        // steps around the loop
+    const BAND = 0.52;     // half-width of the ribbon
+    const CAM = 3.4;       // camera distance for the perspective divide
+
+    // a point on the Mobius surface: u runs the loop, v runs across the band
+    function mobius(u, v) {
+      const half = u / 2;
+      const r = 1 + v * BAND * Math.cos(half);
+      return { x: r * Math.cos(u), y: r * Math.sin(u), z: v * BAND * Math.sin(half) };
+    }
+
+    function transform(p, ax, ay) {
+      const x1 =  p.x * Math.cos(ay) + p.z * Math.sin(ay);
+      const z1 = -p.x * Math.sin(ay) + p.z * Math.cos(ay);
+      const y2 =  p.y * Math.cos(ax) - z1 * Math.sin(ax);
+      const z2 =  p.y * Math.sin(ax) + z1 * Math.cos(ax);
+      return { x: x1, y: y2, z: z2 };
+    }
+
+    function project(p, s) {
+      const k = CAM / (CAM - p.z);
+      return { x: W / 2 + p.x * s * k, y: H / 2 + p.y * s * k, z: p.z };
+    }
+
+    // rotation speed and brightness follow the assistant's state
+    function mood() {
+      const c = wrap.classList;
+      if (c.contains('thinking'))  return { spin: 0.95, glow: 1.25 };
+      if (c.contains('speaking'))  return { spin: 0.55, glow: 1.15 };
+      if (c.contains('listening')) return { spin: 0.40, glow: 1.08 };
+      return { spin: 0.20, glow: 1 };
+    }
+
+    const FRAME_MS = 33;
+    let last = 0, spin = 0, prev = 0;
+
+    function frame(t) {
+      requestAnimationFrame(frame);
+      if (t - last < FRAME_MS) return;
+      const dt = Math.min(0.1, (t - (prev || t)) / 1000);
+      prev = t; last = t;
+      if (!W || !H) return;
+
+      const m = mood();
+      spin += dt * m.spin;
+
+      const tilt = 0.60 + Math.sin(t * 0.00018) * 0.09;   // slow breathing tilt
+      const scale = Math.min(W, H) * 0.335;
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+
+      // build the ribbon quads
+      const quads = [];
+      for (let i = 0; i < SEG; i++) {
+        const u0 = (i / SEG) * Math.PI * 2;
+        const u1 = ((i + 1) / SEG) * Math.PI * 2;
+        const p = [
+          project(transform(mobius(u0, -1), tilt, spin), scale),
+          project(transform(mobius(u0,  1), tilt, spin), scale),
+          project(transform(mobius(u1,  1), tilt, spin), scale),
+          project(transform(mobius(u1, -1), tilt, spin), scale)
+        ];
+        quads.push({ p, z: (p[0].z + p[1].z + p[2].z + p[3].z) / 4, i, u: u0 });
+      }
+      quads.sort((a, b) => a.z - b.z);          // far to near
+
+      for (const q of quads) {
+        const depth = Math.max(0, Math.min(1, (q.z + BAND) / (BAND * 2)));
+        const hue = 228 + (q.u / (Math.PI * 2)) * 40;          // blue -> violet
+        const scan = (q.i % 3 === 0) ? 1.35 : 1;               // holographic banding
+        const a = (0.11 + depth * 0.40) * scan * m.glow;
+
+        ctx.beginPath();
+        ctx.moveTo(q.p[0].x, q.p[0].y);
+        for (let k = 1; k < 4; k++) ctx.lineTo(q.p[k].x, q.p[k].y);
+        ctx.closePath();
+        ctx.fillStyle = 'hsla(' + hue.toFixed(0) + ',96%,' + (60 + depth * 18).toFixed(0) + '%,' + a.toFixed(3) + ')';
+        ctx.fill();
+      }
+
+      // ribs across the band — the wireframe read of a lab hologram
+      const unit = Math.min(W, H);
+      ctx.lineWidth = Math.max(0.6, unit * 0.0025);
+      for (let i = 0; i < SEG; i += 4) {
+        const u = (i / SEG) * Math.PI * 2;
+        const p0 = project(transform(mobius(u, -1), tilt, spin), scale);
+        const p1 = project(transform(mobius(u,  1), tilt, spin), scale);
+        const d = Math.max(0, Math.min(1, ((p0.z + p1.z) / 2 + BAND) / (BAND * 2)));
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+        ctx.strokeStyle = 'rgba(190, 200, 255, ' + (0.10 + d * 0.30).toFixed(3) + ')';
+        ctx.stroke();
+      }
+
+      // edges: a wide soft pass for bloom, then a tight bright pass on top
+      for (const pass of [{ w: 0.022, a: 0.10 }, { w: 0.007, a: 0.72 }]) {
+        for (const v of [-1, 1]) {
+          ctx.beginPath();
+          for (let i = 0; i <= SEG; i++) {
+            const u = (i / SEG) * Math.PI * 2;
+            const pt = project(transform(mobius(u, v), tilt, spin), scale);
+            if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+          }
+          ctx.strokeStyle = 'rgba(226, 219, 255, ' + (pass.a * m.glow).toFixed(3) + ')';
+          ctx.lineWidth = Math.max(1, unit * pass.w);
+          ctx.lineJoin = 'round';
+          ctx.stroke();
+        }
+      }
+
+      // faint containment ring, the way the lab holograms are framed
+      ctx.beginPath();
+      for (let i = 0; i <= 64; i++) {
+        const u = (i / 64) * Math.PI * 2;
+        const pt = project(transform({ x: Math.cos(u) * 1.52, y: Math.sin(u) * 1.52, z: 0 }, tilt, spin * 0.35), scale);
+        if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.strokeStyle = 'rgba(130, 158, 255, 0.28)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    requestAnimationFrame(frame);
   })();
 </script>
 </body>

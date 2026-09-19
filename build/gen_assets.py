@@ -23,17 +23,30 @@ FONT_SEMI = "/usr/share/fonts/truetype/google-fonts/Poppins-SemiBold.ttf"
 if not os.path.exists(FONT_SEMI):
     FONT_SEMI = FONT_BOLD if os.path.exists(FONT_BOLD) else None
 
-# reactor geometry, in the same 400x400 space the SVG in renderer/index.html uses
-BODY = [(52,54),(348,54),(386,190),(300,320),(226,378),(174,378),(100,320),(14,190)]
-TRI  = [(120,148),(280,148),(200,334)]
-HEX  = [(158,10),(242,10),(264,52),(242,94),(158,94),(136,52)]
-CENTER = (200, 216)
+# Mobius hologram geometry — same parametric surface as the renderer
+import math as _m
+BAND, CAM = 0.52, 3.4
 
-def xform(pts, cx, cy, k):
-    return [(cx + (x - CENTER[0]) * k, cy + (y - CENTER[1]) * k) for x, y in pts]
+def _mobius(u, v):
+    h = u / 2.0
+    r = 1 + v * BAND * _m.cos(h)
+    return (r * _m.cos(u), r * _m.sin(u), v * BAND * _m.sin(h))
 
-def shrink(pts, f):
-    return [(CENTER[0] + (x - CENTER[0]) * f, CENTER[1] + (y - CENTER[1]) * f) for x, y in pts]
+def _xf(p, ax, ay):
+    x, y, z = p
+    x1 =  x * _m.cos(ay) + z * _m.sin(ay)
+    z1 = -x * _m.sin(ay) + z * _m.cos(ay)
+    y2 =  y * _m.cos(ax) - z1 * _m.sin(ax)
+    z2 =  y * _m.sin(ax) + z1 * _m.cos(ax)
+    return (x1, y2, z2)
+
+def _proj(p, s, cx, cy):
+    k = CAM / (CAM - p[2])
+    return (cx + p[0] * s * k, cy + p[1] * s * k)
+
+def _edge(v, s, cx, cy, tilt=0.62, spin=0.85, steps=120):
+    return [_proj(_xf(_mobius(i / steps * 2 * _m.pi, v), tilt, spin), s, cx, cy)
+            for i in range(steps + 1)]
 
 def radial_bg(size, c1, c2, center=None):
     w, h = size
@@ -49,40 +62,39 @@ def radial_bg(size, c1, c2, center=None):
     return img
 
 def draw_reactor(img, cx, cy, size):
-    """size = half-height of the shield, in px."""
-    k = size / 190.0
+    """Draws the Mobius hologram. size = radius in px."""
     d = ImageDraw.Draw(img)
-    lw = max(1, int(size * 0.045))
-
-    d.polygon(xform(BODY, cx, cy, k), fill=STEEL_DK, outline=STEEL, width=lw)
-    d.polygon(xform(shrink(BODY, 0.94), cx, cy, k), fill=(52, 50, 108), outline=STEEL, width=max(1, lw // 2))
-    d.polygon(xform(shrink(BODY, 0.88), cx, cy, k), fill=(58, 48, 140))
-    d.polygon(xform(shrink(BODY, 0.80), cx, cy, k), fill=(120, 104, 232))
-
-    d.polygon(xform(TRI, cx, cy, k), fill=CYAN_LITE, outline=NAVY, width=max(1, int(size * 0.055)))
-    # nested chevron struts, both sides
+    s = size / 1.5
+    inner, outer = _edge(-1, s, cx, cy), _edge(1, s, cx, cy)
+    # ribbon body: connect the two edges so it reads as a solid band
     if size > 26:
-        for off in (30, 56):
-            for sgn in (-1, 1):
-                d.line(xform([(200 - sgn * (80 - off * 0.35), 152 + off * 0.35),
-                              (200 - sgn * (off * 0.18), 328)], cx, cy, k),
-                       fill=NAVY, width=max(1, int(size * 0.05)))
-    # centre hex module
-    d.polygon(xform(HEX, cx, cy, k), fill=(56, 52, 116), outline=STEEL, width=max(1, lw // 2))
+        step = max(1, len(inner) // 40)
+        for i in range(0, len(inner) - step, step):
+            d.polygon([inner[i], inner[i + step], outer[i + step], outer[i]],
+                      fill=(104, 100, 214, 168))
+    w = max(1, int(size * 0.055))
+    d.line(inner, fill=CYAN_LITE, width=w, joint="curve")
+    d.line(outer, fill=CYAN_LITE, width=w, joint="curve")
     if size > 26:
-        d.polygon(xform(shrink(HEX, 0.6), cx, cy, k), fill=NAVY, outline=CYAN, width=1)
+        ring = [_proj(_xf((_m.cos(i / 80 * 2 * _m.pi) * 1.52, _m.sin(i / 80 * 2 * _m.pi) * 1.52, 0), 0.62, 0.3), s, cx, cy)
+                for i in range(81)]
+        d.line(ring, fill=STEEL, width=max(1, int(size * 0.02)))
     return img
+
 
 def reactor_composite(size_px, cx, cy, size):
     base = Image.new("RGBA", size_px, (0, 0, 0, 0))
     glow = Image.new("RGBA", size_px, (0, 0, 0, 0))
     gd = ImageDraw.Draw(glow)
-    gd.polygon(xform(shrink(BODY, 0.85), cx, cy, size / 190.0), fill=CYAN + (170,))
-    glow = glow.filter(ImageFilter.GaussianBlur(max(2, int(size * 0.32))))
+    s = size / 1.5
+    for v in (-1, 1):
+        gd.line(_edge(v, s, cx, cy), fill=CYAN + (190,), width=max(3, int(size * 0.22)), joint="curve")
+    glow = glow.filter(ImageFilter.GaussianBlur(max(2, int(size * 0.20))))
     base = Image.alpha_composite(base, glow)
     layer = Image.new("RGBA", size_px, (0, 0, 0, 0))
     draw_reactor(layer, cx, cy, size)
     return Image.alpha_composite(base, layer)
+
 
 def draw_tracked(draw, xy, text, font, fill, tracking=0, anchor="la"):
     widths = [draw.textlength(ch, font=font) for ch in text]
@@ -127,7 +139,7 @@ f_big, f_small = font(FONT_SEMI, 22), font(FONT_BOLD, 8)
 draw_tracked(sd, (SW // 2, int(SH * 0.34) + 74), "AURA", f_big, (226, 222, 255), tracking=6, anchor="ma")
 draw_tracked(sd, (SW // 2, int(SH * 0.34) + 110), "PERSONAL AI ASSISTANT", f_small, (122, 120, 178), tracking=1, anchor="ma")
 sd.line([(24, SH - 34), (SW - 24, SH - 34)], fill=(79, 211, 245), width=1)
-sd.text((SW // 2, SH - 20), "v1.7.0", font=f_small, fill=(96, 92, 150), anchor="mm")
+sd.text((SW // 2, SH - 20), "v1.8.0", font=f_small, fill=(96, 92, 150), anchor="mm")
 sidebar.save(os.path.join(HERE, "installerSidebar.bmp"), "BMP")
 
 print("done:", sorted(os.listdir(HERE)))
