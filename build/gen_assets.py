@@ -127,7 +127,7 @@ f_big, f_small = font(FONT_SEMI, 22), font(FONT_BOLD, 8)
 draw_tracked(sd, (SW // 2, int(SH * 0.34) + 74), "AURA", f_big, (226, 222, 255), tracking=6, anchor="ma")
 draw_tracked(sd, (SW // 2, int(SH * 0.34) + 110), "PERSONAL AI ASSISTANT", f_small, (122, 120, 178), tracking=1, anchor="ma")
 sd.line([(24, SH - 34), (SW - 24, SH - 34)], fill=(79, 211, 245), width=1)
-sd.text((SW // 2, SH - 20), "v1.0.0", font=f_small, fill=(96, 92, 150), anchor="mm")
+sd.text((SW // 2, SH - 20), "v1.7.0", font=f_small, fill=(96, 92, 150), anchor="mm")
 sidebar.save(os.path.join(HERE, "installerSidebar.bmp"), "BMP")
 
 print("done:", sorted(os.listdir(HERE)))

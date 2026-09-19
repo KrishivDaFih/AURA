@@ -16,7 +16,7 @@
     --danger: #ff6f91;
     --line: rgba(130, 104, 255, 0.17);
     --line-strong: rgba(130, 104, 255, 0.34);
-    --panel: rgba(16, 16, 44, 0.78);
+    --panel: rgba(16, 16, 44, 0.54);
     --faint: #585d8f;
     --mono: 'Consolas', 'SF Mono', ui-monospace, monospace;
   }
@@ -92,8 +92,10 @@
   .topbar {
     grid-column: 1 / -1;
     display: flex; align-items: center; gap: 16px; padding: 0 16px;
-    background: linear-gradient(90deg, rgba(20,26,68,0.82), rgba(43,20,88,0.66));
+    background: linear-gradient(90deg, rgba(20,26,68,0.58), rgba(43,20,88,0.44));
     border: 1px solid var(--line); border-radius: 14px;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    transform: translateZ(0);
   }
   .brand { display: flex; align-items: center; gap: 11px; }
   .brand-mark { width: 30px; height: 30px; flex-shrink: 0; filter: drop-shadow(0 0 7px var(--accent-glow)); }
@@ -138,6 +140,8 @@
   .panel {
     position: relative; background: var(--panel); border: 1px solid var(--line);
     border-radius: 14px; padding: 14px 15px;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    transform: translateZ(0);
   }
   .panel::before, .panel::after {
     content: ''; position: absolute; width: 9px; height: 9px; pointer-events: none;
@@ -184,8 +188,10 @@
   /* ---------- MAIN PANEL ---------- */
   .main {
     position: relative; min-height: 0; display: flex; flex-direction: column;
-    background: linear-gradient(170deg, rgba(18,22,60,0.55), rgba(34,18,72,0.45));
+    background: linear-gradient(170deg, rgba(18,22,60,0.38), rgba(34,18,72,0.30));
     border: 1px solid var(--line); border-radius: 22px;
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    transform: translateZ(0);
     overflow: hidden;
   }
   .scanline {
@@ -1407,9 +1413,9 @@
     let bufH = 120;
 
     const RIBBONS = [
-      { hue: 232, sat: 82, amp: 0.10, y: 0.34, speed: 0.00000417, phase: 0.0, width: 0.30, alpha: 0.19 },
-      { hue: 262, sat: 78, amp: 0.13, y: 0.52, speed: 0.00000289, phase: 2.1, width: 0.36, alpha: 0.18 },
-      { hue: 248, sat: 70, amp: 0.08, y: 0.70, speed: 0.00000506, phase: 4.3, width: 0.26, alpha: 0.13 }
+      { hue: 232, sat: 82, amp: 0.10, y: 0.34, speed: 0.00000375, phase: 0.0, width: 0.30, alpha: 0.19 },
+      { hue: 262, sat: 78, amp: 0.13, y: 0.52, speed: 0.00000260, phase: 2.1, width: 0.36, alpha: 0.18 },
+      { hue: 248, sat: 70, amp: 0.08, y: 0.70, speed: 0.00000455, phase: 4.3, width: 0.26, alpha: 0.13 }
     ];
 
     const DUST = 90;
@@ -1468,9 +1474,17 @@
       bctx.fill();
     }
 
+    /* With blur back on the top bar, rail panels and chat panel, every canvas
+       repaint forces all of them to re-sample their backdrop. At 20x slower the
+       ribbons move a few pixels a second, so 60fps buys nothing — ~24fps keeps
+       it smooth and cuts that backdrop work by well over half. */
+    const FRAME_MS = 42;
+    let lastFrame = 0;
+
     function frame(t) {
       requestAnimationFrame(frame);
-      if (!w || !h) return;
+      if (!w || !h || t - lastFrame < FRAME_MS) return;
+      lastFrame = t;
       curX += (tiltX - curX) * 0.03;
       curY += (tiltY - curY) * 0.03;
 

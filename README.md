@@ -22,6 +22,20 @@ Multi-provider HUD assistant: Anthropic, OpenAI, or Groq. Wake word, global
 hotkey, computer control, file attachments, custom connectors, and
 persistent chat history.
 
+## v1.7.0
+
+- Frosted glass restored on the top bar, the Core / Directives / Protocol panels
+  and the chat panel. It stays **off** the conversation drawer and the settings
+  overlay: those two slide and fade, and blurring a layer while it animates over
+  a repainting canvas is what made the colours strobe in the first place. The
+  five surfaces that got the blur back never move, so they never re-composite
+  mid-transition. Panel fills were thinned again (the opacity added when the
+  blur was removed) so the aurora reads through the glass.
+- Aurora drift slowed to 20x below its original speed.
+- The background canvas is now capped at ~24fps. Each repaint forces every
+  blurred layer to re-sample its backdrop, and at this drift speed the ribbons
+  move only a few pixels a second, so the extra frames were pure cost.
+
 ## Fixes in this build
 
 **Scrollbars.** The global stylesheet set `scrollbar-width` / `scrollbar-color` on
@@ -120,7 +134,7 @@ npm start
 
 ## 2. Or run the installer
 
-`AURA-Setup-1.0.0.exe` is a real Windows installer (NSIS) — it walks you
+`AURA-Setup-1.7.0.exe` is a real Windows installer (NSIS) — it walks you
 through an install wizard, lets you pick the install folder, and adds a
 **Start Menu entry, a Desktop shortcut, and an uninstaller** listed in
 "Add or Remove Programs". Unsigned, so SmartScreen will still warn once:
